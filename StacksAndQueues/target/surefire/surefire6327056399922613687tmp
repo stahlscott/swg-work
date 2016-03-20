@@ -1,8 +1,0 @@
-#surefire
-#Fri Mar 18 19:59:38 EDT 2016
-maven.ext.class.path=X\:\\dev\\NetBeans 8.1\\java\\maven-nblib\\netbeans-eventspy.jar
-user.dir=C\:\\dev\\_repos\\week5-johnson-stahl\\StacksAndQueues
-file.encoding=UTF-8
-localRepository=C\:\\Users\\gandalf\\.m2\\repository
-basedir=C\:\\dev\\_repos\\week5-johnson-stahl\\StacksAndQueues
-test=com.tsg.stacksandqueues.linkedlist.LinkedListQueueTest
