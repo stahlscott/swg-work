@@ -1,0 +1,5 @@
+Cleveland Indians::1,,John,,Cena,,1B,,Cleveland Indians,,99::2,,Triple,,H,,2B,,Cleveland Indians,,66::3,,Kenny,,Lofton,,SS,,Cleveland Indians,,1::13,,John,,Smith,,FB,,Cleveland Indians,,23
+Chicago Cubs::17,,Tony,,Rizzo,,IF,,Chicago Cubs,,45::18,,Jacque,,Strappe,,C,,Chicago Cubs,,2::19,,John,,Smith,,3B,,Chicago Cubs,,4::20,,Jim,,Smithfield,,2B,,Chicago Cubs,,73
+New York Mets::16,,David,,Wright,,IF,,New York Mets,,56::14,,Jon,,Smith,,2B,,New York Mets,,87::15,,Matt,,Harvey,,P,,New York Mets,,67
+New York Yankees::9,,Nick,,Goody,,P,,New York Yankees,,73::10,,Greg,,Bird,,IF,,New York Yankees,,33::11,,Ben,,Garmel,,OF,,New York Yankees,,82::12,,John,,Smith,,C,,New York Yankees,,99
+Chicago White Sox::5,,Zach,,Duke,,RP,,Chicago White Sox,,33::7,,Nate,,Jones,,RP,,Chicago White Sox,,65::8,,Chris,,Sale,,SP,,Chicago White Sox,,49

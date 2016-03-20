@@ -1,0 +1,26 @@
+Thoughts - 
+
+Simplifying:
+	Instead of team containing hashmap of players, why not have the leagueroster be a hashmap of PlayerID / TeamName ? Force TeamName to be unique
+
+Req 1: Instead of just "playerId", we have two separate index Ids, one for player, one for team. Team starts at 1, player starts at 100,000.
+
+_K____|____V__
+	1 | Tigers
+	2 | Indians
+	3 | Mets
+100001| Tigers
+100002| Tigers
+100003| Indians
+100004| Mets
+100005| Indians
+	4 | Yankees
+
+Key is req #2: player must be associated with team. So Player is the Key, TeamName is the value. Maybe Team contains an ArrayList of all players assoc with it.
+
+Req 3 -> search leagueRoster.values for team name, add to array if not already in array
+
+Req 4 -> getTeamFromUser, then do a fore loop on the leagueRoster keySet and if the value matches the given string, add to ArrayList 
+
+Req 5 -> much easier, just getPlayerFromUser, then change leagueRoster.get(playerId) => new teamName and Player.teamName to new teamName
+
