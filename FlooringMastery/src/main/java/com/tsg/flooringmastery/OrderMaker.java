@@ -5,7 +5,6 @@
  */
 package com.tsg.flooringmastery;
 
-import com.tsg.flooringmastery.dao.OrderDAO;
 import com.tsg.flooringmastery.dao.ProductDAO;
 import com.tsg.flooringmastery.dao.TaxDAO;
 import com.tsg.flooringmastery.dto.Order;
@@ -26,8 +25,8 @@ public class OrderMaker {
     }
 
     /**
-     * Creates Order from given information, performing the logic to compute all other necessary 
-     * order fields.
+     * Creates Order from given information, performing the logic to compute all other necessary order fields.
+     *
      * @param custName
      * @param state
      * @param productName
@@ -38,12 +37,24 @@ public class OrderMaker {
         Order order = new Order();
         order.setCustomerName(custName);
         order.setState(state);
-        
+
         Double taxRate = taxDAO.getTaxRateByState(state);
+        // checks if state is null; set rate to 0 if not found
+        if (taxRate == null) {
+            taxRate = 0.0;
+        }
         order.setTaxRate(taxRate);
         order.setArea(area);
 
         Product product = productDAO.getProductByName(productName);
+
+        // checks if product is null; set fields to 0 if not found
+        if (product == null) {
+            product = new Product();
+            product.setProductType(productName);
+            product.setCostPerSquareFoot(0.0);
+            product.setLabourCostPerSquareFoot(0.0);
+        }
 
         order.setMaterialCost((product.getCostPerSquareFoot() * area));
         order.setLabourCost(product.getLabourCostPerSquareFoot() * area);
@@ -56,16 +67,27 @@ public class OrderMaker {
 
         return order;
     }
-      public Order modifyOrder(Order order, String custName, String state, String productName, Double area) {
-        
+
+    public Order modifyOrder(Order order, String custName, String state, String productName, Double area) {
+
         order.setCustomerName(custName);
         order.setState(state);
-        
+
         Double taxRate = taxDAO.getTaxRateByState(state);
+        if (taxRate == null) {
+            taxRate = 0.0;
+        }
         order.setTaxRate(taxRate);
         order.setArea(area);
 
         Product product = productDAO.getProductByName(productName);
+
+        if (product == null) {
+            product = new Product();
+            product.setProductType(productName);
+            product.setCostPerSquareFoot(0.0);
+            product.setLabourCostPerSquareFoot(0.0);
+        }
 
         order.setMaterialCost((product.getCostPerSquareFoot() * area));
         order.setLabourCost(product.getLabourCostPerSquareFoot() * area);

@@ -8,8 +8,6 @@ package com.tsg.flooringmastery.dao;
 import com.tsg.flooringmastery.dto.Product;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +30,7 @@ public class ProductDAOTest {
 
     @Before
     public void setUp() {
-        productDAO = new ProductDAO();
+        productDAO = new ProductDAO("test/testproductfile.txt");
 
         carpet = new Product();
         carpet.setProductType("Carpet");
@@ -68,7 +66,7 @@ public class ProductDAOTest {
             fail();
         }
     }
-    // TODO: allow overloaded constructor to set productfile.txt
+
     @Test
     public void ProductDAOGetProductTest() {
         try {
@@ -88,14 +86,14 @@ public class ProductDAOTest {
         } catch (FileNotFoundException ex) {
             fail();
         }
-        
+
         ArrayList<Product> products = productDAO.getProducts();
         ArrayList<Product> proof = new ArrayList<>();
         proof.add(carpet);
         proof.add(laminate);
         proof.add(tile);
         proof.add(wood);
-        
+
         for (Product product : products) {
             assertTrue(proof.contains(product));
             proof.remove(product);

@@ -35,10 +35,6 @@ public class FlooringController {
     private final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0.00");
     String todayDate;
 
-    //TODO delete file if empty
-    //TODO ability to parse commas inline
-    //TODO soft delete (Orders_deleted.txt) w/ date storage
-    
     /**
      * Default constructor; when called, initializes DAOs and OrderMaker, sets default date to today.
      *

@@ -18,16 +18,24 @@ import java.util.Scanner;
  */
 public class ProductDAO {
 
-    private final String PRODUCT_FILE = "productfile.txt";
     private final String DELIMITER = ",";
+    private String productFile = "productfile.txt";
     private ArrayList<Product> products = new ArrayList<>();
+
+    public ProductDAO() {
+
+    }
+
+    public ProductDAO(String productFile) {
+        this.productFile = productFile;
+    }
 
     public ArrayList<Product> getProducts() {
         return products;
     }
 
     /**
-     * 
+     *
      * @param name
      * @return Product that matches given name or null if not found
      */
@@ -42,10 +50,11 @@ public class ProductDAO {
 
     /**
      * Loads PRODUCT_FILE containing product information (type, cost per sf, labor cost per sf)
-     * @throws FileNotFoundException 
+     *
+     * @throws FileNotFoundException
      */
     public void loadProductFile() throws FileNotFoundException {
-        Scanner sc = new Scanner(new BufferedReader(new FileReader(PRODUCT_FILE)));
+        Scanner sc = new Scanner(new BufferedReader(new FileReader(productFile)));
 
         while (sc.hasNextLine()) {
             String currentLine = sc.nextLine();

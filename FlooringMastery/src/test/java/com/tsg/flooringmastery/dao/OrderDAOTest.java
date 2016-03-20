@@ -6,12 +6,13 @@
 package com.tsg.flooringmastery.dao;
 
 import com.tsg.flooringmastery.dto.Order;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.UUID;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -25,10 +26,12 @@ public class OrderDAOTest {
     public OrderDAOTest() {
     }
 
-    final String CONFIG_FILE = "configtest.ini";
-    final String CONFIG_FILE_WRITE = "configtestwrite.ini";
-    final String TEST_DATE = "XXtestXX";
-    final String TEST_DATE2 = "XXtestXX2";
+    final String CONFIG_FILE = "test/configtest.ini";
+    final String CONFIG_FILE_WRITE = "test/configtestwrite.ini";
+    // generates random string for unique test
+    final String TEST_DATE = "test" + UUID.randomUUID().toString();
+    final String TEST_DATE_2 = "test2" + UUID.randomUUID().toString();
+    final String TEST_DATE_3 = "testmode" + UUID.randomUUID().toString();
     OrderDAO orderDAO;
     Order order1;
     Order order2;
@@ -81,11 +84,12 @@ public class OrderDAOTest {
 
     @After
     public void tearDown() {
+        File fileToDelete = new File("Orders_" + TEST_DATE + ".txt");
+        boolean deleted = fileToDelete.delete();
+        fileToDelete = new File("Orders_" + TEST_DATE_2 + ".txt");
+        deleted = fileToDelete.delete();
     }
 
-    /**
-     * tests write, read, getOrder by order number
-     */
     @Test
     public void OrderDAOTestReadWriteFile() {
         orderDAO.addOrder(order1);
@@ -96,7 +100,7 @@ public class OrderDAOTest {
         } catch (IOException ex) {
             fail();
         }
-        // Trick on this one was using order1.getOrderNUmber() instead of 1, 2, 3
+        // Trick on this one was using order1.getOrderNumber() instead of 1, 2, 3
         OrderDAO orderDAOLoad = new OrderDAO(TEST_DATE, false);
         try {
             orderDAOLoad.loadOrderFile(TEST_DATE);
@@ -108,9 +112,26 @@ public class OrderDAOTest {
         }
     }
 
-    @Test // orderDAO initializes as testMode false, ensure that still works
+    @Test // initialize new orderDAO with testMode on, ensure that nothing writes
     public void OrderDAOTestTestMode() {
-        assertFalse(orderDAO.isTestMode());
+        orderDAO = new OrderDAO(TEST_DATE_3, true);
+        assertTrue(orderDAO.isTestMode());
+        
+        orderDAO.addOrder(order1);
+        orderDAO.addOrder(order2);
+        orderDAO.addOrder(order3);
+        try {
+            orderDAO.writeOrderFile();
+        } catch (IOException ex) {
+            fail();
+        }
+        
+        OrderDAO orderDAOLoad = new OrderDAO(TEST_DATE_3, true);
+        try {
+            orderDAOLoad.loadOrderFile(TEST_DATE_3);
+            fail();
+        } catch (FileNotFoundException ex) {
+        }
     }
 
     @Test // test getWorkingDate for setup date
@@ -120,15 +141,45 @@ public class OrderDAOTest {
 
     @Test
     public void OrderDAOTestAddOrder() {
+        //arrange
+        orderDAO.addOrder(order1);
+        orderDAO.addOrder(order2);
+        orderDAO.addOrder(order3);
+
+        //act
+        Order result1 = orderDAO.getOrder(order1.getOrderNumber());
+        Order result2 = orderDAO.getOrder(order2.getOrderNumber());
+        Order result3 = orderDAO.getOrder(order3.getOrderNumber());
+
+        //assert
+        Assert.assertEquals(order1, result1);
+        Assert.assertEquals(order2, result2);
+        Assert.assertEquals(order3, result3);
 
     }
 
     @Test
     public void OrderDAOTestDeleteOrder() {
+        //arrange
+        orderDAO.addOrder(order1);
+        orderDAO.addOrder(order2);
+        orderDAO.addOrder(order3);
+
+        //act
+//        Order deleteResult = orderDAO.deleteOrder(order1);
+        orderDAO.deleteOrder(order1);
+        Order getResult = orderDAO.getOrder(order1.getOrderNumber());
+
+        //assert
+        Assert.assertNull(getResult);
+        //Assert.assertEquals(order1, deleteResult);
+
+        ArrayList<Order> currentOrders = orderDAO.getAllOrdersByDate(TEST_DATE);
+        Assert.assertEquals(2, currentOrders.size());
 
     }
 
-    @Test // change to new date, expect order 3 to exist, expect orders 1 and 2 not to exist
+    @Test // change to new date, expect order 3 to exist, expect order1 && order2 not to exist
     public void OrderDAOTestChangeOrderDate1() {
         // adds orders to current hashmap
         orderDAO.addOrder(order1);
@@ -137,13 +188,13 @@ public class OrderDAOTest {
 
         // attempt to change date -> save file, open new blank hashmap
         try {
-            orderDAO.changeOrderDate(order3, TEST_DATE2);
+            orderDAO.changeOrderDate(order3, TEST_DATE_2);
         } catch (IOException ex) {
             fail(); // if unable to write file
         }
 
-        // check that current date is TEST_DATE2
-        assertEquals(TEST_DATE2, orderDAO.getWorkingDate());
+        // check that current date is TEST_DATE_2
+        assertEquals(TEST_DATE_2, orderDAO.getWorkingDate());
         // check that order1 and order2 are not on the current hashmap
         assertNull(orderDAO.getOrder(order1.getOrderNumber()));
         assertNull(orderDAO.getOrder(order2.getOrderNumber()));
@@ -208,11 +259,11 @@ public class OrderDAOTest {
     @Test // test change date to new date
     public void OrderDAOTestChangeWorkingDate1() {
         try {
-            orderDAO.changeWorkingDate(TEST_DATE2);
+            orderDAO.changeWorkingDate(TEST_DATE_2);
         } catch (IOException ex) {
             fail();
         }
-        assertEquals(TEST_DATE2, orderDAO.getWorkingDate());
+        assertEquals(TEST_DATE_2, orderDAO.getWorkingDate());
     }
 
     @Test // test change date to current date, should be no change
@@ -236,7 +287,7 @@ public class OrderDAOTest {
         assertEquals(TEST_DATE, orderDAO.getWorkingDate());
 
     }
-    
+
     // had to rewrite read/write config file to accept incoming String parameter
     // rather than CONFIG_FILE held as OrderDAO final
     @Test
@@ -254,7 +305,7 @@ public class OrderDAOTest {
         } catch (IOException ex) {
             fail();
         }
-        
+
         // new blank orderDAO
         orderDAO = new OrderDAO(TEST_DATE);
         // load config file which should set idIndex to 4
@@ -265,8 +316,8 @@ public class OrderDAOTest {
         }
         // add another order to hashmap, should be assigned 4
         orderDAO.addOrder(order1);
-        
+
         // check that "3+1" is equal to "4"
-        assertEquals(orderDAO.getOrder(order3.getOrderNumber()+1), orderDAO.getOrder(order1.getOrderNumber()));
+        assertEquals(orderDAO.getOrder(order3.getOrderNumber() + 1), orderDAO.getOrder(order1.getOrderNumber()));
     }
 }

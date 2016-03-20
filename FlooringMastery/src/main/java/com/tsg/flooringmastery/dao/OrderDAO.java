@@ -7,7 +7,9 @@ package com.tsg.flooringmastery.dao;
 
 import com.tsg.flooringmastery.dto.Order;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -26,7 +28,8 @@ import java.util.logging.Logger;
 public class OrderDAO {
 
     //TODO : how would we refactor to keep all dates/orders in memory then only write when save is called
-
+    //  I would think you would have to make the hashmap to be wider - you would have the index be the date and the value
+    //  be a hashmap of all the orders. Then refactor the save to write a file for each key -> value.
     private final String ORDER_PREFIX = "Orders_";
     private final String DELIMITER = ",";
     private boolean testMode;
@@ -48,7 +51,7 @@ public class OrderDAO {
      * testMode should be false. Sets currentIDindex to 1.
      *
      * @param date MMddYYYY
-     * @param junitTestActive set to true if you are doing junit tests
+     * @param junitTestActive true if testMode (no file write) should be active, false if testMode should be false
      */
     public OrderDAO(String date, boolean junitTestActive) {
         this.testMode = junitTestActive;
@@ -89,6 +92,11 @@ public class OrderDAO {
      * @param order
      */
     public void deleteOrder(Order order) {
+        try {
+            appendToDeletedFile(order);
+        } catch (IOException ex) {
+            Logger.getLogger(OrderDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
         orders.remove(order.getOrderNumber());
     }
 
@@ -157,19 +165,45 @@ public class OrderDAO {
      */
     public void writeOrderFile() throws IOException {
         if (!this.testMode) {
-            PrintWriter out = new PrintWriter(new FileWriter(ORDER_PREFIX + this.workingDate + ".txt"));
-            ArrayList<Order> orderVals = getAllOrdersByDate(this.workingDate);
-            if (orderVals != null) {
-                for (Order orderVal : orderVals) {
-                    out.println(orderVal.getOrderNumber() + DELIMITER + orderVal.getCustomerName() + DELIMITER
-                            + orderVal.getState() + DELIMITER + orderVal.getTaxRate() + DELIMITER + orderVal.getProductType()
-                            + DELIMITER + orderVal.getArea() + DELIMITER + orderVal.getCostPerSquareFoot() + DELIMITER
-                            + orderVal.getLabourCostPerSquareFoot() + DELIMITER + orderVal.getMaterialCost() + DELIMITER
-                            + orderVal.getLabourCost() + DELIMITER + orderVal.getTax() + DELIMITER + orderVal.getTotal());
-                    out.flush();
+            if (orders.size() > 0) {
+                PrintWriter out = new PrintWriter(new FileWriter(ORDER_PREFIX + this.workingDate + ".txt"));
+                ArrayList<Order> orderVals = getAllOrdersByDate(this.workingDate);
+                if (orderVals != null) {
+                    for (Order orderVal : orderVals) {
+
+                        out.println(orderVal.getOrderNumber() + DELIMITER + orderVal.getCustomerName().replace(',', ';') + DELIMITER
+                                + orderVal.getState() + DELIMITER + orderVal.getTaxRate() + DELIMITER + orderVal.getProductType()
+                                + DELIMITER + orderVal.getArea() + DELIMITER + orderVal.getCostPerSquareFoot() + DELIMITER
+                                + orderVal.getLabourCostPerSquareFoot() + DELIMITER + orderVal.getMaterialCost() + DELIMITER
+                                + orderVal.getLabourCost() + DELIMITER + orderVal.getTax() + DELIMITER + orderVal.getTotal());
+                        out.flush();
+                    }
+                    out.close();
                 }
-                out.close();
+            } else { // deletes file if no orders present
+                File fileToDelete = new File(ORDER_PREFIX + this.workingDate + ".txt");
+                boolean deleted = fileToDelete.delete();
             }
+        }
+    }
+
+    /**
+     * Appends order to .deletedorders.txt file in common file format preceded by the date in case of accidental delete
+     *
+     * @throws IOException
+     */
+    public void appendToDeletedFile(Order order) throws IOException {
+        if (!this.testMode) {
+
+            PrintWriter out = new PrintWriter(new FileOutputStream(new File(".deletedorders.txt"), true));
+            out.append("\n" + this.workingDate + DELIMITER + order.getOrderNumber() + DELIMITER + order.getCustomerName().replace(',', ';')
+                    + DELIMITER + order.getState() + DELIMITER + order.getTaxRate() + DELIMITER + order.getProductType()
+                    + DELIMITER + order.getArea() + DELIMITER + order.getCostPerSquareFoot() + DELIMITER
+                    + order.getLabourCostPerSquareFoot() + DELIMITER + order.getMaterialCost() + DELIMITER
+                    + order.getLabourCost() + DELIMITER + order.getTax() + DELIMITER + order.getTotal());
+
+            out.flush();
+            out.close();
         }
     }
 
@@ -197,7 +231,7 @@ public class OrderDAO {
             }
 
             order.setOrderNumber(existingOrderId);
-            order.setCustomerName(tokens[1]);
+            order.setCustomerName(tokens[1].replace(';', ','));
             order.setState(tokens[2]);
             order.setTaxRate(Double.parseDouble(tokens[3]));
             order.setProductType(tokens[4]);

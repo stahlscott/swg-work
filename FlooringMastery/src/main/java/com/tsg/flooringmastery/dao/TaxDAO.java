@@ -5,7 +5,6 @@
  */
 package com.tsg.flooringmastery.dao;
 
-import com.tsg.flooringmastery.dto.Product;
 import com.tsg.flooringmastery.dto.Tax;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -19,16 +18,24 @@ import java.util.Scanner;
  */
 public class TaxDAO {
 
-    private final String TAX_FILE = "taxfile.txt";
     private final String DELIMITER = ",";
+    private String taxFile = "taxfile.txt";
     private ArrayList<Tax> taxes = new ArrayList<>();
+
+    public TaxDAO() {
+
+    }
+
+    public TaxDAO(String taxFile) {
+        this.taxFile = taxFile;
+    }
 
     public ArrayList<Tax> getTaxes() {
         return taxes;
     }
 
     /**
-     * 
+     *
      * @param state
      * @return tax rate as a Double from given state name, or null if not found
      */
@@ -44,10 +51,11 @@ public class TaxDAO {
 
     /**
      * Loads tax information file including state abbrev and tax rate
-     * @throws FileNotFoundException 
+     *
+     * @throws FileNotFoundException
      */
     public void loadTaxFile() throws FileNotFoundException {
-        Scanner sc = new Scanner(new BufferedReader(new FileReader(TAX_FILE)));
+        Scanner sc = new Scanner(new BufferedReader(new FileReader(taxFile)));
 
         while (sc.hasNextLine()) {
             String currentLine = sc.nextLine();

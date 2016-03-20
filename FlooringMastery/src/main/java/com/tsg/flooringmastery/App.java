@@ -10,6 +10,7 @@ package com.tsg.flooringmastery;
  * @author Scott Stahl <stahl.scott@gmail.com>
  */
 public class App {
+
     public static void main(String[] args) {
         FlooringController flooringController = new FlooringController();
         flooringController.run();
