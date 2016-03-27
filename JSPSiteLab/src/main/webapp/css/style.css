@@ -1,0 +1,19 @@
+
+.page-header {
+    border-style: solid;
+    border-color: gray;   
+    border-width: 1px;
+    padding: 20px;
+}
+
+.page-footer {
+    border-style: solid;
+    border-color: gray;   
+    border-width: 1px;
+    padding: 20px;
+    
+}
+
+.marked {
+    border: 1px solid;
+}
