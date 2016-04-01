@@ -21,60 +21,28 @@
         <div class="container-fluid">
             <!--<h1>Vending Machine</h1>-->
             <hr/>
+            
             <c:forEach var="item" items="${iList}" varStatus="itemCount">
                 <c:if test="${itemCount.count%3==1}">
                     <div class="row">
-                        <div class="col-sm-4 text-center">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">${item.name}</div>
-                                <div class="panel-body">
-                                    <div class="row">
-                                        <div class="col-xs-6">
-                                            <b><fmt:formatNumber value="${item.cost}" type="CURRENCY"/></b> each <br/>
-                                            qty: [${item.quantity}]<br/><br/>
-                                            <span class="btn btn-default itemSel" data-vend-id="${item.position}" data-vend-cost="${item.cost}">${item.position}</span>
-                                        </div>
-                                        <div class="col-xs-6"><img src="${pageContext.request.contextPath}${item.imgUrl}" width="100"/></div>
-                                    </div>
+                </c:if>
+                <div class="col-sm-4 text-center">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">${item.name}</div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <b><fmt:formatNumber value="${item.cost}" type="CURRENCY"/></b> each <br/>
+                                    qty: [${item.quantity}]<br/><br/>
+                                    <span class="btn btn-default itemSel" data-vend-id="${item.position}" data-vend-cost="${item.cost}">${item.position}</span>
                                 </div>
-                            </div>
-                        </div>
-                    </c:if>
-                    <c:if test="${itemCount.count%3==2}">
-                        <div class="col-sm-4 text-center">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">${item.name}</div>
-                                <div class="panel-body">
-                                    <div class="row">
-                                        <div class="col-xs-6">
-                                            <b><fmt:formatNumber value="${item.cost}" type="CURRENCY"/></b> each <br/>
-                                            qty: [${item.quantity}]<br/><br/>
-                                            <span class="btn btn-default itemSel" data-vend-id="${item.position}" data-vend-cost="${item.cost}">${item.position}</span>
-                                        </div>
-                                        <div class="col-xs-6"><img src="${pageContext.request.contextPath}${item.imgUrl}" width="100"/></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </c:if>
-                    <c:if test="${itemCount.count%3==0}">
-                        <div class="col-sm-4 text-center">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">${item.name}</div>
-                                <div class="panel-body">
-                                    <div class="row">
-                                        <div class="col-xs-6">
-                                            <b><fmt:formatNumber value="${item.cost}" type="CURRENCY"/></b> each <br/>
-                                            qty: [${item.quantity}]<br/><br/>
-                                            <span class="btn btn-default itemSel" data-vend-id="${item.position}" data-vend-cost="${item.cost}">${item.position}</span>
-                                        </div>
-                                        <div class="col-xs-6"><img src="${pageContext.request.contextPath}${item.imgUrl}" width="100"/></div>
-                                    </div>
-                                </div>
+                                <div class="col-xs-6"><img src="${pageContext.request.contextPath}${item.imgUrl}" width="100"/></div>
                             </div>
                         </div>
                     </div>
-                    <br/>
+                </div>
+                <c:if test="${itemCount.count%3==0}">
+                    </div>
                 </c:if>
             </c:forEach>
             <hr/><br/><br/><br/><br/><br/><br/><br/><br/>
