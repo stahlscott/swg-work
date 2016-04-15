@@ -6,13 +6,9 @@
 package com.tsg.vendingmachinemvc.dao;
 
 import com.tsg.vendingmachinemvc.dto.Item;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.TreeMap;
 
 /**
@@ -24,15 +20,21 @@ public class VendingMachineDaoInMemImpl implements VendingMachineDao {
     private Map<String, Item> vendingMachine = new TreeMap<>();
     private static final String DELIMITER = "::";
 
+    public VendingMachineDaoInMemImpl() {
+        loadItemList();
+    }
+
     @Override
     public void addItem(Item item) {
         vendingMachine.put(item.getPosition(), item);
     }
 
     @Override
-    public void vendItem(String position) {
+    // i probably should have done this logic within the controller
+    public Item vendItem(String position) {
         Item item = vendingMachine.get(position);
         item.setQuantity(item.getQuantity() - 1);
+        return item;
     }
 
     @Override
@@ -46,14 +48,14 @@ public class VendingMachineDaoInMemImpl implements VendingMachineDao {
     }
 
     @Override
-    public void loadItemList(String itemFile) throws FileNotFoundException {
+    public void loadItemList() {
 
         Item item = new Item();
         item.setPosition("A1");
         item.setName("Rogue Dead Guy");
         item.setCost(4.50);
         item.setQuantity(10);
-        item.setImgUrl("/img/Rogue-Dead-Guy-Ale.jpg");
+        item.setImgUrl("img/Rogue-Dead-Guy-Ale.jpg");
         addItem(item);
 
         item = new Item();
@@ -61,7 +63,7 @@ public class VendingMachineDaoInMemImpl implements VendingMachineDao {
         item.setName("Stone Ruination");
         item.setCost(6.45);
         item.setQuantity(5);
-        item.setImgUrl("/img/ruination.png");
+        item.setImgUrl("img/ruination.png");
         addItem(item);
 
         item = new Item();
@@ -69,7 +71,7 @@ public class VendingMachineDaoInMemImpl implements VendingMachineDao {
         item.setName("Deschutes Pinedrops");
         item.setCost(5.65);
         item.setQuantity(20);
-        item.setImgUrl("/img/pinedrops.png");
+        item.setImgUrl("img/pinedrops.png");
         addItem(item);
 
         item = new Item();
@@ -77,7 +79,7 @@ public class VendingMachineDaoInMemImpl implements VendingMachineDao {
         item.setName("Ithaca Flower Power");
         item.setCost(6.00);
         item.setQuantity(14);
-        item.setImgUrl("/img/flowerpower.jpg");
+        item.setImgUrl("img/flowerpower.jpg");
         addItem(item);
 
         item = new Item();
@@ -85,7 +87,7 @@ public class VendingMachineDaoInMemImpl implements VendingMachineDao {
         item.setName("Full Pint Chinookie");
         item.setCost(6.85);
         item.setQuantity(12);
-        item.setImgUrl("/img/chinookie.png");
+        item.setImgUrl("img/chinookie.png");
         addItem(item);
 
         item = new Item();
@@ -93,7 +95,7 @@ public class VendingMachineDaoInMemImpl implements VendingMachineDao {
         item.setName("Southern Tier Live");
         item.setCost(4.35);
         item.setQuantity(14);
-        item.setImgUrl("/img/live.jpg");
+        item.setImgUrl("img/live.jpg");
         addItem(item);
 
         item = new Item();
@@ -101,15 +103,15 @@ public class VendingMachineDaoInMemImpl implements VendingMachineDao {
         item.setName("Left Hand Nitro Milk Stout");
         item.setCost(4.95);
         item.setQuantity(10);
-        item.setImgUrl("/img/nitromilkstout.png");
+        item.setImgUrl("img/nitromilkstout.png");
         addItem(item);
 
         item = new Item();
         item.setPosition("C2");
         item.setName("Three Heads The Kind");
         item.setCost(5.25);
-        item.setQuantity(8);
-        item.setImgUrl("/img/thekind.jpg");
+        item.setQuantity(0);
+        item.setImgUrl("img/thekind.jpg");
         addItem(item);
 
         item = new Item();
@@ -117,7 +119,7 @@ public class VendingMachineDaoInMemImpl implements VendingMachineDao {
         item.setName("Thirsty Dog Citra");
         item.setCost(5.90);
         item.setQuantity(20);
-        item.setImgUrl("/img/citra.png");
+        item.setImgUrl("img/citra.png");
         addItem(item);
 
 //        Scanner sc = new Scanner(new BufferedReader(new FileReader(itemFile)));
