@@ -12,6 +12,7 @@ import java.util.Objects;
  * @author Scott Stahl <stahl.scott@gmail.com>
  */
 public class Item {
+    private Integer itemId;
     private String name;
     private Double cost;
     private Integer quantity;
@@ -58,14 +59,23 @@ public class Item {
         this.imgUrl = imgUrl;
     }
 
+    public Integer getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(Integer itemId) {
+        this.itemId = itemId;
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 31 * hash + Objects.hashCode(this.name);
-        hash = 31 * hash + Objects.hashCode(this.cost);
-        hash = 31 * hash + Objects.hashCode(this.quantity);
-        hash = 31 * hash + Objects.hashCode(this.position);
-        hash = 31 * hash + Objects.hashCode(this.imgUrl);
+        hash = 71 * hash + Objects.hashCode(this.itemId);
+        hash = 71 * hash + Objects.hashCode(this.name);
+        hash = 71 * hash + Objects.hashCode(this.cost);
+        hash = 71 * hash + Objects.hashCode(this.quantity);
+        hash = 71 * hash + Objects.hashCode(this.position);
+        hash = 71 * hash + Objects.hashCode(this.imgUrl);
         return hash;
     }
 
@@ -90,6 +100,9 @@ public class Item {
         if (!Objects.equals(this.imgUrl, other.imgUrl)) {
             return false;
         }
+        if (!Objects.equals(this.itemId, other.itemId)) {
+            return false;
+        }
         if (!Objects.equals(this.cost, other.cost)) {
             return false;
         }
@@ -98,6 +111,8 @@ public class Item {
         }
         return true;
     }
+
+    
 
    
     

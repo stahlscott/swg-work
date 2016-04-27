@@ -29,11 +29,7 @@ public class VendControllerNoAjax {
     @Inject
     public VendControllerNoAjax(VendingMachineDao dao) {
         this.dao = dao;
-        change = new ChangeFactory();
-        try {
-            dao.loadItemList("item_file.txt");
-        } catch (FileNotFoundException ex) {
-        }
+        dao.loadItemList();
     }
 
     @RequestMapping(value = {"/", "/vend"}, method = RequestMethod.GET)
@@ -48,6 +44,7 @@ public class VendControllerNoAjax {
         String selection = req.getParameter("selection");
         String totalDeposit = req.getParameter("totalDeposit");
         if (!selection.equals("")) {
+            change = new ChangeFactory();
             totalDeposit = (!(totalDeposit).equals("")) ? totalDeposit.substring(2) : "0.00";
             double deposit = Double.parseDouble(totalDeposit);
             change.addToTotal(deposit);

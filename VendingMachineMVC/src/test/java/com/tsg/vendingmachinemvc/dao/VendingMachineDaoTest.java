@@ -6,7 +6,6 @@
 package com.tsg.vendingmachinemvc.dao;
 
 import com.tsg.vendingmachinemvc.dto.Item;
-import java.io.FileNotFoundException;
 import java.util.List;
 import org.junit.After;
 import org.junit.Before;
@@ -14,6 +13,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  *
@@ -34,23 +34,29 @@ public class VendingMachineDaoTest {
         ApplicationContext ctx = new ClassPathXmlApplicationContext("test-applicationContext.xml");
         dao = ctx.getBean("vendingMachineDao", VendingMachineDao.class);
 
+        JdbcTemplate cleaner = ctx.getBean("jdbcTemplate", JdbcTemplate.class);
+        cleaner.execute("delete from item");
+
         item1 = new Item();
         item1.setName("Rogue");
         item1.setCost(5.50);
         item1.setQuantity(10);
         item1.setPosition("A1");
+        item1.setImgUrl("none");
 
         item2 = new Item();
         item2.setName("Stone");
         item2.setCost(6.50);
         item2.setQuantity(5);
         item2.setPosition("B2");
+        item2.setImgUrl("none");
 
         item3 = new Item();
         item3.setName("Genny");
         item3.setCost(4.50);
         item3.setQuantity(20);
         item3.setPosition("C3");
+        item3.setImgUrl("none");
     }
 
     @After
@@ -83,13 +89,9 @@ public class VendingMachineDaoTest {
         assertEquals(3, iList.size());
     }
 
-    @Test
-    public void loadItemsTest() {
-        try {
-            dao.loadItemList("item_file.txt");
-            assertEquals(9, dao.getAllItems().size());
-        } catch (FileNotFoundException ex) {
-            fail();
-        }
-    }
+//    @Test
+//    public void loadItemsTest() {
+//        dao.loadItemList();
+//        assertEquals(9, dao.getAllItems().size());
+//    }
 }

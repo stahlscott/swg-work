@@ -3,7 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.tsg</groupId>
     <artifactId>VendingMachineMVC</artifactId>
+<<<<<<< HEAD
     <version>1.0</version>
+=======
+    <version>1.5-SNAPSHOT</version>
+>>>>>>> 46448c91939ec1e25b78a0efa43edde6b7a999b4
     <packaging>war</packaging>
     <name>VendingMachineMVC Spring MVC Webapp</name>
     <url>http://maven.apache.org</url>

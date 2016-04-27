@@ -1,0 +1,9 @@
+A1::Bell's Hopslam::5.0::5
+A2::Stone Go-To::6.5::8
+A3::Grt Lks Chillwave::6.06::5
+B1::Dragon's Milk::13.48::14
+B2::Sthrn Tier Live::4.5::20
+B3::Fat Tire::4.01::15
+C1::Anti-Hero::6.99::7
+C2::The Kind IPA::4.79::8
+C3::Nitro Milk Stout::4.81::9

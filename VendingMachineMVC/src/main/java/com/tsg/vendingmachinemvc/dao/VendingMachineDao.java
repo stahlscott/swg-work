@@ -6,7 +6,6 @@
 package com.tsg.vendingmachinemvc.dao;
 
 import com.tsg.vendingmachinemvc.dto.Item;
-import java.io.FileNotFoundException;
 import java.util.List;
 
 /**
@@ -17,12 +16,12 @@ public interface VendingMachineDao {
     
     public void addItem(Item item);
 
-    public void vendItem(String position);
+    public Item vendItem(String position);
 
     public Item getItemByPosition(String position);
 
     public List<Item> getAllItems();
 
-    public void loadItemList(String itemFile) throws FileNotFoundException;
+    public void loadItemList();
 
 }

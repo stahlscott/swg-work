@@ -73,19 +73,19 @@ public class DvdLibraryDaoInMemImpl implements DvdLibraryDao {
         };
         
         titleMatches = (titleCriteria == null || titleCriteria.isEmpty()) ? truePredicate : 
-                (d) -> d.getTitle().equalsIgnoreCase(titleCriteria);
+                (d) -> d.getTitle().contains(titleCriteria);
         releaseDateMatches = (releaseDateCriteria == null || releaseDateCriteria.isEmpty()) ? truePredicate : 
-                (d) -> d.getReleaseDate().equalsIgnoreCase(releaseDateCriteria);
+                (d) -> d.getReleaseDate().contains(releaseDateCriteria);
         mpaaRatingMatches = (mpaaRatingCriteria == null || mpaaRatingCriteria.isEmpty()) ? truePredicate : 
-                (d) -> d.getMpaaRating().equalsIgnoreCase(mpaaRatingCriteria);
+                (d) -> d.getMpaaRating().contains(mpaaRatingCriteria);
         studioMatches = (studioCriteria == null || studioCriteria.isEmpty()) ? truePredicate : 
-                (d) -> d.getStudio().equalsIgnoreCase(studioCriteria);
+                (d) -> d.getStudio().contains(studioCriteria);
         directorMatches = (directorCriteria == null || directorCriteria.isEmpty()) ? truePredicate : 
-                (d) -> d.getDirector().equalsIgnoreCase(directorCriteria);
+                (d) -> d.getDirector().contains(directorCriteria);
         reviewerRatingMatches = (reviewerRatingCriteria == null || reviewerRatingCriteria.isEmpty()) ? truePredicate : 
-                (d) -> d.getReviewerRating().equals(Integer.parseInt(reviewerRatingCriteria));
+                (d) -> d.getReviewerRating().contains(reviewerRatingCriteria);
         notesMatches = (notesCriteria == null || notesCriteria.isEmpty()) ? truePredicate : 
-                (d) -> d.getNotes().equalsIgnoreCase(notesCriteria);
+                (d) -> d.getNotes().contains(notesCriteria);
         
         return dvdMap.values().stream()
                 .filter(titleMatches
