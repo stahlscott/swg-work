@@ -5,20 +5,23 @@
  */
 
 var POSTS_PER_PAGE = 5;
+var currentCategoryName;
+var currentCategoryId;
 
 $(document).ready(function () {
+    currentCategoryId = $('#category-id').data('category-id');
+    currentCategoryName = $('#category-id').data('category-name');
     loadPosts(1);
-    
 });
 
 function loadPosts(startOfRange) {
     clearPostTable();
 
     var postTable = $('#main-content');
-    
+
     $.ajax({
         type: 'GET',
-        url: $('#page-context').data("context") + '/category/id/' + $('#category-id').data('category-id') + '/posts/visible/' + startOfRange + '/' + POSTS_PER_PAGE
+        url: $('#page-context').data("context") + '/category/id/' + currentCategoryId + '/posts/visible/' + startOfRange + '/' + POSTS_PER_PAGE
     }).success(function (data, status) {
         $.each(data, function (index, post) {
             var currentPost = "";
@@ -28,18 +31,24 @@ function loadPosts(startOfRange) {
             currentPost += '<br/>';
             currentPost += '<h4>' + post.postDateTime[1] + '-' + post.postDateTime[2] + '-' + post.postDateTime[0];
             currentPost += ' | Posted by: ' + post.userName;
-            
+
             if (post.categoryNames.length > 0) {
                 currentPost += ' in ';
                 for (var i = 0; i < post.categoryNames.length; i++) {
 //                    $('#category-id').text(post.categoryNames[i]);
-                    currentPost += '<a href="' + $('#page-context').data("context") + '/category/display/' + post.categoryIds[i] + '">' + post.categoryNames[i] + '</a>';
+                    currentPost += '<a ';
+
+                    if (post.categoryNames[i] === currentCategoryName) {
+                        currentPost += 'style="font-weight: bold;" ';
+                    }
+
+                    currentPost += 'href="' + $('#page-context').data("context") + '/category/display/' + post.categoryIds[i] + '">' + post.categoryNames[i] + '</a>';
                     if (i < post.categoryNames.length - 1) {
                         currentPost += ', ';
                     }
                 }
             }
-            
+
             currentPost += '</h4>';
             currentPost += '</div>';
             currentPost += '<div class="panel-body">';
@@ -115,12 +124,12 @@ $('#postPageModal').on('show.bs.modal', function (event) {
         modal.find('#post-date').text(post.postDateTime[2]);
         modal.find('#post-year').text(post.postDateTime[0]);
         modal.find('#post-body').html(post.postContent); //display in html
-        
+
         var categoryList = "";
         if (post.categoryNames.length > 0) {
             categoryList += ' in ';
             for (var i = 0; i < post.categoryNames.length; i++) {
-                categoryList += '<a href="' + $('#page-context').data("context") + 'category/display/' + post.categoryIds[i] + '">' + post.categoryNames[i] + '</a>';
+                categoryList += '<a href="' + $('#page-context').data("context") + '/category/display/' + post.categoryIds[i] + '">' + post.categoryNames[i] + '</a>';
                 if (i < post.categoryNames.length - 1) {
                     categoryList += ', ';
                 }

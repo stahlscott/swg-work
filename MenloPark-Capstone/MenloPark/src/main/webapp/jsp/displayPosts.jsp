@@ -5,6 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -26,9 +27,12 @@
 
                 <div class="col-sm-4" id="side-bar">
                     <jsp:include page="sidebarFragment.jsp"/>
+
+                    
                 </div>
             </div> 
             <jsp:include page="footerFragment.jsp"/>
+
         </div>
 
         <p class="hidden" id="pc">${pageContext.request.contextPath}</p>

@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Apr 21, 2016 at 01:24 PM
--- Server version: 5.5.47-0ubuntu0.14.04.1
--- PHP Version: 5.5.9-1ubuntu4.14
+-- Generation Time: May 03, 2016 at 02:06 PM
+-- Server version: 5.5.49-0ubuntu0.14.04.1
+-- PHP Version: 5.5.9-1ubuntu4.16
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -23,6 +23,27 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `authorities`
+--
+
+CREATE TABLE IF NOT EXISTS `authorities` (
+  `username` varchar(20) NOT NULL,
+  `authority` varchar(20) NOT NULL,
+  PRIMARY KEY (`username`,`authority`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `authorities`
+--
+
+INSERT INTO `authorities` (`username`, `authority`) VALUES
+('admin', 'ROLE_ADMIN'),
+('admin', 'ROLE_EDITOR'),
+('editor', 'ROLE_EDITOR');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `category`
 --
 
@@ -31,7 +52,7 @@ CREATE TABLE IF NOT EXISTS `category` (
   `category_name` varchar(50) NOT NULL,
   PRIMARY KEY (`category_id`),
   UNIQUE KEY `name` (`category_name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -49,7 +70,7 @@ CREATE TABLE IF NOT EXISTS `page` (
   PRIMARY KEY (`page_id`),
   KEY `user_id` (`user_id`),
   KEY `parent_id` (`parent_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
 
 -- --------------------------------------------------------
 
@@ -69,7 +90,7 @@ CREATE TABLE IF NOT EXISTS `post` (
   `editor_comments` text NOT NULL,
   PRIMARY KEY (`post_id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=25 ;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -100,30 +121,6 @@ CREATE TABLE IF NOT EXISTS `post_tag` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `role`
---
-
-CREATE TABLE IF NOT EXISTS `role` (
-  `role_id` int(11) NOT NULL AUTO_INCREMENT,
-  `description` varchar(50) NOT NULL,
-  `write_access` tinyint(1) NOT NULL,
-  `editor_access` tinyint(1) NOT NULL,
-  `admin_access` tinyint(1) NOT NULL,
-  PRIMARY KEY (`role_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
-
---
--- Dumping data for table `role`
---
-
-INSERT INTO `role` (`role_id`, `description`, `write_access`, `editor_access`, `admin_access`) VALUES
-(1, 'admin', 1, 1, 1),
-(2, 'editor', 1, 1, 0),
-(3, 'writer', 1, 0, 0);
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `tag`
 --
 
@@ -142,58 +139,58 @@ CREATE TABLE IF NOT EXISTS `tag` (
 
 CREATE TABLE IF NOT EXISTS `user` (
   `user_id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(30) NOT NULL,
+  `username` varchar(20) NOT NULL,
   `password` varchar(50) NOT NULL,
-  `role_id` int(11) NOT NULL,
+  `enabled` tinyint(1) NOT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `user_id` (`user_id`),
-  UNIQUE KEY `name` (`name`),
-  KEY `role_id` (`role_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+  UNIQUE KEY `name` (`username`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
 
 --
 -- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`user_id`, `name`, `password`, `role_id`) VALUES
-(1, 'admin', 'admin', 1);
+INSERT INTO `user` (`user_id`, `username`, `password`, `enabled`) VALUES
+(1, 'admin', 'admin', 1),
+(2, 'editor', 'editor', 1);
 
 --
 -- Constraints for dumped tables
 --
 
 --
+-- Constraints for table `authorities`
+--
+ALTER TABLE `authorities`
+  ADD CONSTRAINT `authorities_ibfk_1` FOREIGN KEY (`username`) REFERENCES `user` (`username`) ON UPDATE CASCADE;
+
+--
 -- Constraints for table `page`
 --
 ALTER TABLE `page`
-  ADD CONSTRAINT `page_ibfk_2` FOREIGN KEY (`parent_id`) REFERENCES `page` (`page_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `page_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `page_ibfk_2` FOREIGN KEY (`parent_id`) REFERENCES `page` (`page_id`),
+  ADD CONSTRAINT `page_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`);
 
 --
 -- Constraints for table `post`
 --
 ALTER TABLE `post`
-  ADD CONSTRAINT `post_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `post_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`);
 
 --
 -- Constraints for table `post_category`
 --
 ALTER TABLE `post_category`
-  ADD CONSTRAINT `post_category_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `post` (`post_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `post_category_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `category` (`category_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `post_category_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `category` (`category_id`),
+  ADD CONSTRAINT `post_category_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `post` (`post_id`);
 
 --
 -- Constraints for table `post_tag`
 --
 ALTER TABLE `post_tag`
-  ADD CONSTRAINT `post_tag_ibfk_2` FOREIGN KEY (`tag_id`) REFERENCES `tag` (`tag_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `post_tag_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `post` (`post_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
---
--- Constraints for table `user`
---
-ALTER TABLE `user`
-  ADD CONSTRAINT `user_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `role` (`role_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `post_tag_ibfk_2` FOREIGN KEY (`tag_id`) REFERENCES `tag` (`tag_id`),
+  ADD CONSTRAINT `post_tag_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `post` (`post_id`);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

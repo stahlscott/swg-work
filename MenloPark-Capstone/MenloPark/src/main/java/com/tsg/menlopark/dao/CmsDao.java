@@ -18,6 +18,7 @@ public interface CmsDao {
     public void deleteUser(int userId);
     public void updateUser(User user);
     public User getUserById(int userId);
+    public User getUserByName(String userName);
     public List<User> getAllUsers();
     
     public Post addPost(Post post);
@@ -25,8 +26,12 @@ public interface CmsDao {
     public void updatePost(Post post);
     public Post getPostById(int postId);
     public List<Post> getAllPosts();
+    public List<Post> getAllFlaggedPosts();
+    public List<Post> getAllDraftPosts();
+    public List<Post> getAllReviewPosts();
     public Post getVisiblePostById(int postId);
     public List<Post> getAllVisiblePosts();
+    public List<Post> getAllPostHeaders();
     public List<Post> getVisiblePostHeaders();
     public int getAllVisiblePostsSize();
     public List<Post> getNextVisiblePosts(int startingPost, int numberOfPosts);
@@ -38,6 +43,8 @@ public interface CmsDao {
     public List<Post> getVisiblePostsByTagId(int tagId);
     public int getVisiblePostsByTagIdSize(int tagId);
     public List<Post> getNextVisiblePostsByTagId(int tagId, int startingPost, int numberOfPosts);
+    public void rejectPost(int postId, String comment);
+    public void approvePost(int postId);
     
     public Category addCategory(Category category);
     public void deleteCategory(int categoryId);

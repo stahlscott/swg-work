@@ -49,16 +49,4 @@
             </div>
         </div>
     </div>
-
-
-
-
-
-
-
-
-
-
-    <!-- footer here -->
-
 </div>

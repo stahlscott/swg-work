@@ -20,14 +20,13 @@
     <body>
         <span id="page-context" data-context="${pageContext.request.contextPath}"></span>
         <span id="post-id" data-post-id="${postId}"></span>
-        <span id="category-id" data-category-id="${categoryId}"></span>
+        <span id="category-id" data-category-id="${categoryId}" data-category-name="${categoryName}"></span>
 
         <div class="container">
             <jsp:include page="headerFragment.jsp"/>
-<!--            <div class="alert alert-info text-left">
-                Viewing all posts within "<span id="category-id" style="font-weight: bold;" data-category-id="${categoryId}"></span>"
-
-            </div>-->
+            <div class="alert alert-info text-left">
+                Viewing all posts within category "<span id="display-category-name" style="font-weight: bold;">${categoryName}</span>"
+            </div>
             <div class="row">
 
                 <div id="main-content" class="col-sm-8"> 

@@ -45,13 +45,13 @@ public class CmsDaoDbImpl implements CmsDao {
     // <editor-fold defaultstate="collapsed" desc="User SQL statements">
     // Users
     private static final String SQL_INSERT_USER
-            = "insert into user (name, password, role_id) values (?, ?, ?)";
+            = "insert into user (username, password, enabled) values (?, ?, ?)";
 
     private static final String SQL_DELETE_USER
             = "delete from user where user_id = ?";
 
     private static final String SQL_UPDATE_USER
-            = "update user set name = ?, password = ?, role_id = ? where user_id = ?";
+            = "update user set username = ?, password = ?, enabled = ? where user_id = ?";
 
     private static final String SQL_SELECT_ALL_USERS
             = "select * from user";
@@ -59,8 +59,10 @@ public class CmsDaoDbImpl implements CmsDao {
     private static final String SQL_SELECT_USER
             = "select * from user where user_id = ?";
 
+    private static final String SQL_SELECT_USER_BY_USERNAME = "select * from user where username = ?";
+
     private static final String SQL_SELECT_USER_NAME_BY_POST_ID
-            = "select name from user u join post p where p.user_id = u.user_id and p.post_id = ?";
+            = "select username from user u join post p where p.user_id = u.user_id and p.post_id = ?";
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Post SQL statements">
@@ -82,16 +84,30 @@ public class CmsDaoDbImpl implements CmsDao {
     private static final String SQL_SELECT_POST
             = "select * from post where post_id = ?";
 
+    private static final String SQL_SELECT_FLAGGED_FRAGMENT
+            = "flagged_for_review = true or draft = true";
+
+    private static final String SQL_SELECT_ALL_DRAFT_POSTS = "select * from post where draft = true";
+
+    private static final String SQL_SELECT_ALL_REVIEW_POSTS = "select * from post where flagged_for_review = true";
+
     private static final String SQL_SELECT_VISIBLE_POST_WHERE_FRAGMENT
             = "flagged_for_review = false and draft = false and post_datetime < CURRENT_TIMESTAMP() and expire_datetime > CURRENT_TIMESTAMP()";
 
     private static final String SQL_SELECT_ALL_VISIBLE_POSTS
             = "select * from post where " + SQL_SELECT_VISIBLE_POST_WHERE_FRAGMENT + SQL_ORDER_BY_DATE_DESC;
 
+    private static final String SQL_SELECT_ALL_FLAGGED_POSTS
+            = "select * from post where " + SQL_SELECT_FLAGGED_FRAGMENT + SQL_ORDER_BY_DATE_DESC;
+
     private static final String SQL_SELECT_VISIBLE_POST_HEADERS
             = "select post_id, user_id, post_title, post_datetime, expire_datetime, flagged_for_review, draft from post where "
             + SQL_SELECT_VISIBLE_POST_WHERE_FRAGMENT + SQL_ORDER_BY_DATE_DESC;
-    
+
+    private static final String SQL_SELECT_ALL_POST_HEADERS
+            = "select post_id, user_id, post_title, post_datetime, expire_datetime, flagged_for_review, draft from post"
+            + SQL_ORDER_BY_DATE_DESC;
+
     private static final String SQL_SELECT_NEXT_VISIBLE_POSTS
             = SQL_SELECT_ALL_VISIBLE_POSTS + " LIMIT ?, ?";
 
@@ -120,7 +136,11 @@ public class CmsDaoDbImpl implements CmsDao {
     private static final String SQL_SELECT_NEXT_VISIBLE_POSTS_BY_TAG
             = SQL_SELECT_ALL_VISIBLE_POSTS_BY_TAG + " LIMIT ?, ?";
 
+    private static final String SQL_REJECT_POST = "UPDATE `post` SET `editor_comments` = ? WHERE post_id = ?";
+
+    private static final String SQL_APPROVE_POST = "UPDATE `post` SET `flagged_for_review`= false WHERE post_id = ?";
     // </editor-fold>
+    
     // <editor-fold defaultstate="collapsed" desc="Post_Category, Post_Tag SQL statements">
     private static final String SQL_INSERT_POST_CATEGORY
             = "insert into post_category (post_id, category_id) values (?, ?)";
@@ -211,27 +231,26 @@ public class CmsDaoDbImpl implements CmsDao {
             = "update page set user_id = ?, page_name = ?, page_content = ?, display_index = ?, parent_id = ? where page_id = ?";
 
     private static final String SQL_SELECT_ALL_PAGES
-            = "select * from page order by display_index asc"; // TODO is display_index unique? also should page_content/post_content be blob?
+            = "select * from page order by parent_id asc, display_index asc"; // TODO is display_index unique? also should page_content/post_content be blob?
 
     private static final String SQL_SELECT_PAGE
             = "select * from page where page_id = ?";
-    
+
     private static final String SQL_SELECT_HIGHEST_INDEX
             = "select max(display_index) from page";
-    
-    private static final String SQL_SELECT_PARENT_PAGES
-            = "SELECT * FROM `page` WHERE parent_id is null";
-            
-    // </editor-fold>
-    // </editor-fold>
 
+    private static final String SQL_SELECT_PARENT_PAGES
+            = "select * from page where parent_id is null";
+
+    // </editor-fold>
+    // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="User methods">
     // Users
     // =====
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public User addUser(User user) {
-        jdbcTemplate.update(SQL_INSERT_USER, user.getName(), user.getPassword(), user.getRoleId());
+        jdbcTemplate.update(SQL_INSERT_USER, user.getUsername(), user.getPassword(), user.getRoleId());
         user.setUserId(jdbcTemplate.queryForObject(SQL_LAST_INDEX, Integer.class));
         return user;
     }
@@ -243,13 +262,22 @@ public class CmsDaoDbImpl implements CmsDao {
 
     @Override
     public void updateUser(User user) {
-        jdbcTemplate.update(SQL_UPDATE_USER, user.getName(), user.getPassword(), user.getRoleId(), user.getUserId());
+        jdbcTemplate.update(SQL_UPDATE_USER, user.getUsername(), user.getPassword(), user.getUserId());
     }
 
     @Override
     public User getUserById(int userId) {
         try {
             return jdbcTemplate.queryForObject(SQL_SELECT_USER, new UserMapper(), userId);
+        } catch (EmptyResultDataAccessException ex) {
+            return null;
+        }
+    }
+
+    @Override
+    public User getUserByName(String userName) {
+        try {
+            return jdbcTemplate.queryForObject(SQL_SELECT_USER_BY_USERNAME, new UserMapper(), userName);
         } catch (EmptyResultDataAccessException ex) {
             return null;
         }
@@ -288,8 +316,21 @@ public class CmsDaoDbImpl implements CmsDao {
                 post.getPostDateTime().toString(), post.getExpDateTime().toString(), post.isFlaggedForReview(), post.isDraft(),
                 post.getEditorComments(), post.getPostId());
         jdbcTemplate.update(SQL_DELETE_POST_CATEGORY_BY_POST_ID, post.getPostId());
+        jdbcTemplate.update(SQL_DELETE_POST_TAG_BY_POST_ID, post.getPostId());
         insertPostCategory(post);
         insertPostTag(post);
+    }
+
+    @Override
+    public void rejectPost(int postId, String comment) {
+        jdbcTemplate.update(SQL_REJECT_POST, comment, postId);
+    }
+
+    @Override
+    public void approvePost(int postId) {
+        jdbcTemplate.update(SQL_APPROVE_POST, postId);
+//        Post post;
+//        post.setFlaggedForReview(false);
     }
 
     @Override
@@ -309,9 +350,23 @@ public class CmsDaoDbImpl implements CmsDao {
         return formatPostList(SQL_SELECT_ALL_POSTS);
     }
 
+    @Override
+    public List<Post> getAllFlaggedPosts() {
+        return formatPostList(SQL_SELECT_ALL_FLAGGED_POSTS);
+    }
+
+    @Override
+    public List<Post> getAllDraftPosts() {
+        return formatPostList(SQL_SELECT_ALL_DRAFT_POSTS);
+    }
+
+    @Override
+    public List<Post> getAllReviewPosts() {
+        return formatPostList(SQL_SELECT_ALL_REVIEW_POSTS);
+    }
+
     /**
-     * Returns a list of all posts that aren't flagged for review, draft status,
-     * or outside of date range.
+     * Returns a list of all posts that aren't flagged for review, draft status, or outside of date range.
      *
      * @return List<Post>
      */
@@ -319,10 +374,15 @@ public class CmsDaoDbImpl implements CmsDao {
     public List<Post> getAllVisiblePosts() {
         return formatPostList(SQL_SELECT_ALL_VISIBLE_POSTS);
     }
-    
+
     @Override
     public List<Post> getVisiblePostHeaders() {
         return jdbcTemplate.query(SQL_SELECT_VISIBLE_POST_HEADERS, new PostHeaderMapper());
+    }
+
+    @Override
+    public List<Post> getAllPostHeaders() {
+        return jdbcTemplate.query(SQL_SELECT_ALL_POST_HEADERS, new PostHeaderMapper());
     }
 
     @Override
@@ -331,8 +391,7 @@ public class CmsDaoDbImpl implements CmsDao {
     }
 
     /**
-     * Returns the next visible numberOfPosts posts from startingPost (1 being
-     * newest).
+     * Returns the next visible numberOfPosts posts from startingPost (1 being newest).
      *
      * @param startingPost as 1-base, starting from newest
      * @param numberOfPosts number of posts to return
@@ -484,8 +543,7 @@ public class CmsDaoDbImpl implements CmsDao {
     }
 
     /**
-     * Generates a map of Tags and the number of their occurrences across all
-     * posts.
+     * Generates a map of Tags and the number of their occurrences across all posts.
      *
      * @return Map<Tag, Integer>
      */
@@ -527,7 +585,6 @@ public class CmsDaoDbImpl implements CmsDao {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public Page addPage(Page page) {
-
         jdbcTemplate.update(SQL_INSERT_PAGE, page.getUserId(), page.getPageName(), page.getPageContent(),
                 page.getDisplayIndex(), page.getParentId());
         page.setPageId(jdbcTemplate.queryForObject(SQL_LAST_INDEX, Integer.class));
@@ -558,15 +615,16 @@ public class CmsDaoDbImpl implements CmsDao {
     public List<Page> getAllPages() {
         return jdbcTemplate.query(SQL_SELECT_ALL_PAGES, new PageMapper());
     }
-    
+
     @Override
     public List<Page> getParentPages() {
         return jdbcTemplate.query(SQL_SELECT_PARENT_PAGES, new PageMapper());
     }
-    
+
     @Override
     public Integer getHighestDisplayIndex() {
-        return jdbcTemplate.queryForObject(SQL_SELECT_HIGHEST_INDEX, Integer.class);
+        Integer highestIndex = jdbcTemplate.queryForObject(SQL_SELECT_HIGHEST_INDEX, Integer.class);
+        return (highestIndex == null) ? 0 : highestIndex;
     }
     // </editor-fold>
 
@@ -660,13 +718,13 @@ public class CmsDaoDbImpl implements CmsDao {
         return idArray;
     }
 
-    private String[] getCategoryNamesForPost(Post post) {
-        List<String> categoryNames = jdbcTemplate.queryForList(SQL_SELECT_CATEGORY_NAME_BY_POST_ID, new Integer[]{post.getPostId()}, String.class);
-        String[] nameArray = new String[categoryNames.size()];
-        for (int i = 0; i < categoryNames.size(); i++) {
-            nameArray[i] = categoryNames.get(i);
+    private String[] getCategoryNamesForPostFromIds(int[] categoryIds) {
+//        List<String> categoryNames = jdbcTemplate.queryForList(SQL_SELECT_CATEGORY_NAME_BY_POST_ID, new Integer[]{post.getPostId()}, String.class);
+        String[] categoryNames = new String[categoryIds.length];
+        for (int i = 0; i < categoryIds.length; i++) {
+            categoryNames[i] = getCategoryById(categoryIds[i]).getName();
         }
-        return nameArray;
+        return categoryNames;
     }
 
     private void insertPostTag(Post post) {
@@ -696,13 +754,13 @@ public class CmsDaoDbImpl implements CmsDao {
         return idArray;
     }
 
-    private String[] getTagNamesForPost(Post post) {
-        List<String> tagNames = jdbcTemplate.queryForList(SQL_SELECT_TAG_NAME_BY_POST_ID, new Integer[]{post.getPostId()}, String.class);
-        String[] nameArray = new String[tagNames.size()];
-        for (int i = 0; i < tagNames.size(); i++) {
-            nameArray[i] = tagNames.get(i);
+    private String[] getTagNamesForPostFromIds(int[] tagIds) {
+//        List<String> tagNames = jdbcTemplate.queryForList(SQL_SELECT_TAG_NAME_BY_POST_ID, new Integer[]{post.getPostId()}, String.class);
+        String[] tagNames = new String[tagIds.length];
+        for (int i = 0; i < tagIds.length; i++) {
+            tagNames[i] = getTagById(tagIds[i]).getName();
         }
-        return nameArray;
+        return tagNames;
     }
 
     private Post buildDisplayablePost(String sqlStatement, int postId) {
@@ -718,8 +776,8 @@ public class CmsDaoDbImpl implements CmsDao {
     private Post buildPost(Post post) {
         post.setCategoryIds(getCategoryIdsForPost(post));
         post.setTagIds(getTagIdsForPost(post));
-        post.setCategoryNames(getCategoryNamesForPost(post));
-        post.setTagNames(getTagNamesForPost(post));
+        post.setCategoryNames(getCategoryNamesForPostFromIds(post.getCategoryIds()));
+        post.setTagNames(getTagNamesForPostFromIds(post.getTagIds()));
         post.setUserName(jdbcTemplate.queryForObject(SQL_SELECT_USER_NAME_BY_POST_ID, String.class, post.getPostId()));
         return post;
     }
@@ -734,9 +792,9 @@ public class CmsDaoDbImpl implements CmsDao {
         public User mapRow(ResultSet rs, int i) throws SQLException {
             User user = new User();
             user.setUserId(rs.getInt("user_id"));
-            user.setName(rs.getString("name"));
+            user.setUsername(rs.getString("username"));
             user.setPassword(rs.getString("password"));
-            user.setRoleId(rs.getInt("role_id"));
+            user.setEnabled(rs.getBoolean("enabled"));
             return user;
         }
     }
@@ -758,7 +816,7 @@ public class CmsDaoDbImpl implements CmsDao {
             return post;
         }
     }
-    
+
     private static final class PostHeaderMapper implements RowMapper<Post> {
 
         @Override
@@ -773,7 +831,7 @@ public class CmsDaoDbImpl implements CmsDao {
             post.setDraft(rs.getBoolean("draft"));
             return post;
         }
-        
+
     }
 
     private static final class CategoryMapper implements RowMapper<Category> {

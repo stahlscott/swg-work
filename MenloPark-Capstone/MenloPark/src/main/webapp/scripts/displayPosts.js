@@ -65,11 +65,12 @@ function loadPosts(startOfRange) {
 
             postTable.append(currentPost);
         });
-        pagination(postTable, startOfRange);
+        pagination(startOfRange);
     });
 }
 
-function pagination(postTable, currentStart) {
+function pagination(currentStart) {
+    $('#side-pagination').empty();
     $.ajax({
         type: 'GET',
         url: $('#page-context').data("context") + '/posts/visible/size'
@@ -90,7 +91,7 @@ function pagination(postTable, currentStart) {
             pageList += '><a onclick="loadPosts(' + startOfRange + ')">' + startOfRange + '-' + endOfRange + '</a></li>';
         }
         pageList += '</ul>';
-        postTable.append(pageList);
+        $('#side-pagination').append(pageList);
     });
 }
 
@@ -104,7 +105,7 @@ $('#postPageModal').on('show.bs.modal', function (event) {
     var modal = $(this);
 
     $.ajax({
-        url: 'post/' + id
+        url: 'post/visible/' + id
     }).success(function (post) {
         modal.find('#post-id').text(post.postId); //won't need this
         modal.find('#post-title').text(post.postTitle);
@@ -117,7 +118,7 @@ $('#postPageModal').on('show.bs.modal', function (event) {
         if (post.categoryNames.length > 0) {
             categoryList += ' in ';
             for (var i = 0; i < post.categoryNames.length; i++) {
-                categoryList += '<a href="' + $('#page-context').data("context") + 'category/display/' + post.categoryIds[i] + '">' + post.categoryNames[i] + '</a>';
+                categoryList += '<a href="' + $('#page-context').data("context") + '/category/display/' + post.categoryIds[i] + '">' + post.categoryNames[i] + '</a>';
                 if (i < post.categoryNames.length - 1) {
                     categoryList += ', ';
                 }

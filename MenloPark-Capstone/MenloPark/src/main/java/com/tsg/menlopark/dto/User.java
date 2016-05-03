@@ -13,9 +13,10 @@ import java.util.Objects;
  */
 public class User {
     private int userId;
-    private String name;
+    private String username;
     private int roleId;
     private String password;
+    private boolean enabled;
 
     public int getUserId() {
         return userId;
@@ -25,12 +26,12 @@ public class User {
         this.userId = userId;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public int getRoleId() {
@@ -49,13 +50,22 @@ public class User {
         this.password = password;
     }
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 83 * hash + this.userId;
-        hash = 83 * hash + Objects.hashCode(this.name);
-        hash = 83 * hash + this.roleId;
-        hash = 83 * hash + Objects.hashCode(this.password);
+        int hash = 7;
+        hash = 79 * hash + this.userId;
+        hash = 79 * hash + Objects.hashCode(this.username);
+        hash = 79 * hash + this.roleId;
+        hash = 79 * hash + Objects.hashCode(this.password);
+        hash = 79 * hash + (this.enabled ? 1 : 0);
         return hash;
     }
 
@@ -77,7 +87,10 @@ public class User {
         if (this.roleId != other.roleId) {
             return false;
         }
-        if (!Objects.equals(this.name, other.name)) {
+        if (this.enabled != other.enabled) {
+            return false;
+        }
+        if (!Objects.equals(this.username, other.username)) {
             return false;
         }
         if (!Objects.equals(this.password, other.password)) {
@@ -85,6 +98,5 @@ public class User {
         }
         return true;
     }
-    
     
 }

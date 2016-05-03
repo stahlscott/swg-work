@@ -9,15 +9,14 @@ $(document).ready(function () {
     loadPosts();
 });
 
-function loadPosts(startOfRange) {
+function loadPosts() {
     clearPostTable();
 
     var postTable = $('#main-content');
 
-
     $.ajax({
         type: 'GET',
-        url: $('#page-context').data("context") + '/post/' + $('#post-id').data('post-id')
+        url: $('#page-context').data("context") + '/post/' + $('#post-id').data("post-id")
     }).success(function (post, status) {
         var currentPost = "";
 

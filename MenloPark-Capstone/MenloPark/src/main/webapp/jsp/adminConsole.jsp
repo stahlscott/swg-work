@@ -3,7 +3,7 @@
     Created on : 26-Apr-2016
     Author     : Chris
 --%>
-
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -26,46 +26,60 @@
                         <div class="panel-heading"><h4><strong>Posts Awaiting Approval</strong></h4>
                         </div>
                         <div class="panel-body">
-                            <p class="text-muted">Populate posts with confirm / reject buttons; reject button pulls up a comment box</p>
+                            
+                            <table class="table table-striped" id="unapproved-posts">
+                                <thead>
+                                    <tr><th>Post Title</th>
+                                        <th>Author</th>
+                                        <th>Date Submitted</th>
+                                        <th>Returned Comments</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="unapproved-posts-body">
+                                    
+                                </tbody>
+                            </table>
+                            <!-- TODO: adding links to edit a post from this page, 
+                            taking the user to the editPage.jsp. somehow -->
 
-
-                        </div>
-                    </div>
-                    <div class ="panel panel-default">
-                        <div class="panel-heading"><h4><strong>Navbar Appearance</strong></h4>
-                        </div>
-                        <div class="panel-body">
-                            <p class="text-muted"> // not yet. use ints for now; won't work for child pages. use draggable/sortable jquery UI</p>
-
-                            <div class="col-sm-4">
-
-                                <ul id="nav-index">
-
-
-                                    <br><br>
-                                    <button class="btn btn-primary" id="navbar-submit" type="submit">Confirm</button>
-                                    </form>
+                            <div id="alertDivUpper">
+                                
                             </div>
                         </div>
                     </div>
 
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h4><strong>Sortable Pages</strong></h4>
+                            <h4><strong>Navbar Appearance - Sortable Pages</strong></h4>
                         </div>
                         <div class="panel-body">
 
                             <ol class="sortable" id="page-sort">
                             </ol>
-
-                            <button type="button" class="btn btn-primary" onclick="submitPageOrder()">Submit</button>
-                            <button type="button" class="btn btn-default" onclick="loadSortablePages()">Reset</button>
+                            <br>
+                            <button type="button" class="btn btn-primary" onclick="submitPages()">Submit</button>
+                            <button type="button" class="btn btn-default" onclick="refreshPages()">Refresh</button>
+                            <br>
+                            <div id="alert-div">
+                                
+                            </div>
                         </div>
                     </div>
                 </div><!-- end of main content -->
 
                 <div class="col-sm-4" id="side-bar">
-                    <jsp:include page="sidebarFragment.jsp"/>
+                    <div class="panel panel-danger">
+                        <div class="panel-heading"><h4><strong>Welcome, <span id="the-username"><sec:authentication property="principal.username" /></span>!</strong></h4>
+                        </div>
+                        <div class="panel-body">
+                            <ul style="list-style: none">
+                                <li><a href="${pageContext.request.contextPath}/edit">Create/Edit a Blog Post</a></li>
+                                <li><a href="${pageContext.request.contextPath}/page/edit">Create/Edit a Page</a></li>
+                            </ul>
+                        </div>
+                    
+
                 </div>
             </div>  <!-- footer here -->
 

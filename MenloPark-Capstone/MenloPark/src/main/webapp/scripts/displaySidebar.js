@@ -71,7 +71,7 @@ function generatePostSummary() {
                 basePanel += '</h4>';
                 basePanel += '</div>';
                 basePanel += '<div id="collapse' + dateId + '" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading' + dateId + '">';
-                basePanel += '<div class="panel-body" id="body-' + dateId + '">';
+                basePanel += '<div class="panel-body text-left" id="body-' + dateId + '">';
                 basePanel += '</div>';
                 basePanel += '</div>';
                 basePanel += '</div>';

@@ -63,19 +63,19 @@ public class CmsDaoTest {
         cleaner.execute("delete from user");
 
         user1 = new User();
-        user1.setName("admin");
+        user1.setUsername("admin");
         user1.setPassword("admin");
-        user1.setRoleId(1);
+        user1.setEnabled(true);
 
         user2 = new User();
-        user2.setName("editor");
+        user2.setUsername("editor");
         user2.setPassword("editor");
-        user2.setRoleId(2);
+        user2.setEnabled(true);
 
         user3 = new User();
-        user3.setName("writer");
+        user3.setUsername("writer");
         user3.setPassword("writer");
-        user3.setRoleId(3);
+        user3.setEnabled(true);
 
         post1 = new Post();
         post1.setPostTitle("My first post");
@@ -171,12 +171,28 @@ public class CmsDaoTest {
     @After
     public void tearDown() {
     }
+    
+    /**
+     * Helper to set up prerequisites when needed
+     */
+    private void preReqAddUsersAndPosts() {
+        // Pre-req - add users
+        user1 = dao.addUser(user1);
+        user2 = dao.addUser(user2);
+        user3 = dao.addUser(user3);
 
-    // TODO add test methods here.
-    // The methods must be annotated with annotation @Test. For example:
-    //
-    // @Test
-    // public void hello() {}
+        // set post ids and names to user ids and names
+        post1.setUserId(user1.getUserId());
+        post2.setUserId(user2.getUserId());
+        post3.setUserId(user3.getUserId());
+        post4.setUserId(user2.getUserId());
+
+        post1.setUserName(user1.getUsername());
+        post2.setUserName(user2.getUsername());
+        post3.setUserName(user3.getUsername());
+        post4.setUserName(user2.getUsername());
+    }
+    
     @Test
     public void addGetUpdateDeletePost() {
         preReqAddUsersAndPosts();
@@ -209,19 +225,7 @@ public class CmsDaoTest {
 
     @Test
     public void TEST_getAllPosts() {
-        user1 = dao.addUser(user1);
-        user2 = dao.addUser(user2);
-        user3 = dao.addUser(user3);
-
-        post1.setUserId(user1.getUserId());
-        post2.setUserId(user2.getUserId());
-        post3.setUserId(user3.getUserId());
-        post4.setUserId(user2.getUserId());
-
-        post1.setUserName(user1.getName());
-        post2.setUserName(user2.getName());
-        post3.setUserName(user3.getName());
-        post4.setUserName(user2.getName());
+        preReqAddUsersAndPosts();
 
         dao.addPost(post1);
         dao.addPost(post2);
@@ -278,6 +282,12 @@ public class CmsDaoTest {
         // or null if negative criteria entered
         assertEquals(0, dao.getNextVisiblePosts(5, 5).size());
         assertNull(dao.getNextVisiblePosts(-5, 10));
+        
+        // get all flagged posts - should only contain post1 and post2, in that order (chronologically)
+        postList = dao.getAllFlaggedPosts();
+        assertEquals(2, postList.size());
+        assertEquals(post1, postList.get(0));
+        assertEquals(post2, postList.get(1));
     }
 
     @Test
@@ -491,24 +501,6 @@ public class CmsDaoTest {
         assertEquals(tag3, tagCloud.get(tagCloud.indexOf(tag3)));
     }
 
-    private void preReqAddUsersAndPosts() {
-        // Pre-req - add users
-        user1 = dao.addUser(user1);
-        user2 = dao.addUser(user2);
-        user3 = dao.addUser(user3);
-
-        // set post ids and names to user ids and names
-        post1.setUserId(user1.getUserId());
-        post2.setUserId(user2.getUserId());
-        post3.setUserId(user3.getUserId());
-        post4.setUserId(user2.getUserId());
-
-        post1.setUserName(user1.getName());
-        post2.setUserName(user2.getName());
-        post3.setUserName(user3.getName());
-        post4.setUserName(user2.getName());
-    }
-
     @Test
     public void addGetDeletePagesTest() {
         preReqAddUsersAndPosts();
@@ -600,6 +592,52 @@ public class CmsDaoTest {
         assertEquals(page3, dao.getPageById(page3.getPageId()));
         assertEquals(updated, page3.getPageContent());
               
+        
+    }
+    @Test
+    public void rejectPostTest() {
+        preReqAddUsersAndPosts();
+        
+        assertEquals("You really need more content than this.", post1.getEditorComments());
+        
+        String commentAdded = "Here's some stuff";
+        
+        post1.setEditorComments(commentAdded);
+        
+        dao.rejectPost(post1.getPostId(), post1.getEditorComments());
+        
+        assertEquals(commentAdded, post1.getEditorComments());  
+        
+        post2.setEditorComments(commentAdded);
+        
+        dao.rejectPost(post2.getPostId(), post2.getEditorComments());
+        
+        assertEquals(commentAdded, post2.getEditorComments());
+        
+        //not changing post 3 comments, but still rejecting
+        dao.rejectPost(post3.getPostId(), post3.getEditorComments());
+        assertNotEquals(commentAdded, post3.getEditorComments());
+
+    }
+    
+    @Test
+    public void approvePostTest() {
+        preReqAddUsersAndPosts();
+        
+        post1.setFlaggedForReview(true);
+        
+        assertTrue(post1.isFlaggedForReview());
+        
+//        List<Post> flagged = dao.getAllFlaggedPosts();
+//        
+//        assertEquals(1, flagged.size());
+        
+        dao.approvePost(post1.getPostId());
+        post1.setFlaggedForReview(false); // this isn't actually set in the DAO method, because i'm not passing objects back and forth, just using SQL
+        
+        assertFalse(post1.isFlaggedForReview());
+        
+        
         
     }
 }

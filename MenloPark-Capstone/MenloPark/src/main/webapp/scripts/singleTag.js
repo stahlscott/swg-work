@@ -5,10 +5,13 @@
  */
 
 var POSTS_PER_PAGE = 5;
+var currentTagName;
+var currentTagId;
 
 $(document).ready(function () {
+    currentTagId = $('#tag-id').data('tag-id');
+    currentTagName = $('#tag-id').data('tag-name');
     loadTags(1);
-    
 });
 
 function loadTags(startOfRange) {
@@ -18,7 +21,7 @@ function loadTags(startOfRange) {
 
     $.ajax({
         type: 'GET',
-        url: $('#page-context').data("context") + '/tag/id/' + $('#tag-id').data('tag-id') + '/posts/visible/' + startOfRange + '/' + POSTS_PER_PAGE
+        url: $('#page-context').data("context") + '/tag/id/' + currentTagId + '/posts/visible/' + startOfRange + '/' + POSTS_PER_PAGE
     }).success(function (data, status) {
         $.each(data, function (index, post) {
 
@@ -50,8 +53,16 @@ function loadTags(startOfRange) {
             currentPost += '<small>';
 
             for (var i = 0; i < post.tagNames.length; i++) {
-                currentPost += '<span class="attached-tag" id="tag"' + post.tagIds[i] + '"><span class="label label-default"><a href="' + $('#page-context').data("context") + '/tag/display/' + post.tagIds[i] + '">#' + post.tagNames[i] + '</a></span></span>&nbsp;';
+                currentPost += '<span class="attached-tag" id="tag"' + post.tagIds[i] + '"><span class="label label-';
+                if (post.tagNames[i] === currentTagName) {
+                    currentPost += 'primary';
+                } else {
+                    currentPost += 'default';
+                }
+                currentPost += '"><a href="' + $('#page-context').data("context") + '/tag/display/' + post.tagIds[i] + '">#'
+                        + post.tagNames[i] + '</a></span></span>&nbsp;';
             }
+
             currentPost += '</small>';
             currentPost += '</h4>';
             currentPost += '</div>';
@@ -69,7 +80,7 @@ function loadTags(startOfRange) {
 function pagination(postTable, currentStart) {
     $.ajax({
         type: 'GET',
-        url: $('#page-context').data("context") + '/tag/id/' + $('#tag-id').data('tag-id') + '/posts/visible/size'
+        url: $('#page-context').data("context") + '/tag/id/' + currentTagId + '/posts/visible/size'
     }).success(function (size, status) {
         var numberOfPages = (size / POSTS_PER_PAGE);
         var pageList = '<ul class="pagination">';
@@ -108,13 +119,13 @@ $('#postPageModal').on('show.bs.modal', function (event) {
         modal.find('#post-month').text(post.postDateTime[1]);
         modal.find('#post-date').text(post.postDateTime[2]);
         modal.find('#post-year').text(post.postDateTime[0]);
-        modal.find('#post-body').html(post.postContent); 
-        
+        modal.find('#post-body').html(post.postContent);
+
         var categoryList = "";
         if (post.categoryNames.length > 0) {
             categoryList += ' in ';
             for (var i = 0; i < post.categoryNames.length; i++) {
-                categoryList += '<a href="' + $('#page-context').data("context") + 'category/display/' + post.categoryIds[i] + '">' + post.categoryNames[i] + '</a>';
+                categoryList += '<a href="' + $('#page-context').data("context") + '/category/display/' + post.categoryIds[i] + '">' + post.categoryNames[i] + '</a>';
                 if (i < post.categoryNames.length - 1) {
                     categoryList += ', ';
                 }

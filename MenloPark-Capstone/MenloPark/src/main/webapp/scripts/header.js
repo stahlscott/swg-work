@@ -29,7 +29,7 @@ function populateNavbar() {
                 if (page.pageId === currentPageId) {
                     navlink += ' class="active"';
                 }
-                navlink += '><a href="' + $('#page-context').data("context") + '/page/display/' + page.pageId + '">'; //  class="dropdown-toggle" data-hover="dropdown" <-- tried to work with plugin, couldn't get it working
+                navlink += '><a id="page-link-' + page.pageId+'" href="' + $('#page-context').data("context") + '/page/display/' + page.pageId + '">'; //  class="dropdown-toggle" data-hover="dropdown" <-- tried to work with plugin, couldn't get it working
                 navlink += page.pageName + '</a>';
                 navlink += '</li>';
                 navbar.append(navlink);
@@ -40,6 +40,9 @@ function populateNavbar() {
                     $('#nav-page-' + page.parentId).attr('class', function (i, origValue) {
                         return origValue + ' dropdown';
                     });
+                    // comment these out and uncomment styles.css to use hover functionality
+                    $('#page-link-' + page.parentId).attr('class', 'dropdown-toggle');
+                    $('#page-link-' + page.parentId).attr('data-toggle', 'dropdown');
                 }
 
                 // add child to parent nav-dropdown list

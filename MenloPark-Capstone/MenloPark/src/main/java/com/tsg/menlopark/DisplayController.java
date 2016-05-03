@@ -50,13 +50,26 @@ public class DisplayController {
         return "singlePost";
     }
 
+    @RequestMapping(value = "/editor/post/display/{postId}", method = RequestMethod.GET)
+    public String displayEditorSinglePostPage(Model model, @PathVariable int postId) {
+        Post post = dao.getPostById(postId);
+        if (post != null) {
+            model.addAttribute("postId", postId);
+        } else {
+            model.addAttribute("postId", "null"); // make this into a 404 not found page?
+        }
+        return "singlePost";
+    }
+   
     @RequestMapping(value = "category/display/{categoryId}", method = RequestMethod.GET)
-    public String displaySingleCategoryPage(@PathVariable int categoryId) {
+    public String displaySingleCategoryPage(Model model, @PathVariable int categoryId) {
+        model.addAttribute("categoryName", dao.getCategoryById(categoryId).getName());
         return "singleCategory";
     }
 
     @RequestMapping(value = "tag/display/{tagId}", method = RequestMethod.GET)
-    public String displaySingleTagPage(@PathVariable int tagId) {
+    public String displaySingleTagPage(Model model, @PathVariable int tagId) {
+        model.addAttribute("tagName", dao.getTagById(tagId).getName());
         return "singleTag";
     }
 
@@ -66,26 +79,73 @@ public class DisplayController {
     }
 
     @RequestMapping(value = "page/display/{pageId}", method = RequestMethod.GET)
-    public String displayPage(Model model, @PathVariable int pageId) {
+    public String displayPage(@PathVariable int pageId) {
         return "singlePage";
     }
 
-    @RequestMapping(value = "/adminConsole", method = RequestMethod.GET)
+    // ENDPOINTS with Permissions
+    @RequestMapping(value = "/admin/console", method = RequestMethod.GET)
     public String displayAdminConsole() {
         return "adminConsole";
     }
 
+    @RequestMapping(value = "/editor/console", method = RequestMethod.GET)
+    public String displayEditorConsole() {
+        return "editorConsole";
+    }
+
+    //DEPRECATED ENDPOINT
+//    @RequestMapping(value = "/adminConsole", method = RequestMethod.GET) 
+//    public String displayAdminConsoleOld() {
+//        return "adminConsole";
+//    }
     // <editor-fold defaultstate="collapsed" desc="Post REST endpoints">
-    @RequestMapping(value = "/post/{postId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/editor/post/{postId}", method = RequestMethod.GET)
     @ResponseBody
     public Post getPost(@PathVariable int postId) {
         return dao.getPostById(postId);
     }
+    
+    @RequestMapping(value ="/post/{postId}", method=RequestMethod.GET) 
+    @ResponseBody
+    public Post getPostById(@PathVariable int postId) {
+        return dao.getPostById(postId);
+    }
+    
+    @RequestMapping(value = "/post/visible/{postId}", method = RequestMethod.GET)
+    @ResponseBody
+    public Post getVisiblePost(@PathVariable int postId) {
+        return dao.getVisiblePostById(postId);
+    }
 
-    @RequestMapping(value = "/posts/all", method = RequestMethod.GET)
+    @RequestMapping(value = "/editor/posts/all", method = RequestMethod.GET)
     @ResponseBody
     public List<Post> getAllPosts() {
         return dao.getAllPosts();
+    }
+
+    @RequestMapping(value = "/posts/all/headers", method = RequestMethod.GET)
+    @ResponseBody
+    public List<Post> getAllPostHeaders() {
+        return dao.getAllPostHeaders();
+    }
+    //gets both draft and flagged_for_review
+    @RequestMapping(value = "/editor/posts/flagged", method = RequestMethod.GET)
+    @ResponseBody
+    public List<Post> getAllFlaggedPosts() {
+        return dao.getAllFlaggedPosts();
+    }
+    //gets only drafts
+    @RequestMapping(value = "/editor/posts/draft", method=RequestMethod.GET)
+    @ResponseBody
+    public List<Post> getAllDraftPosts() {
+        return dao.getAllDraftPosts();
+    }
+    //gets only flagged_for_review
+    @RequestMapping(value="/editor/posts/review", method=RequestMethod.GET)
+    @ResponseBody
+    public List<Post> getAllReviewPosts() {
+        return dao.getAllReviewPosts();
     }
 
     @RequestMapping(value = "/posts/visible", method = RequestMethod.GET)
@@ -99,7 +159,7 @@ public class DisplayController {
     public Integer getVisiblePostsSize() {
         return dao.getAllVisiblePostsSize();
     }
-    
+
     @RequestMapping(value = "/posts/visible/headers", method = RequestMethod.GET)
     @ResponseBody
     public List<Post> getVisiblePostHeaders() {
@@ -112,12 +172,11 @@ public class DisplayController {
         return dao.getNextVisiblePosts(startingPost, numberOfPosts);
     }
 
-    @RequestMapping(value = "/category/id/{categoryId}/posts/all", method = RequestMethod.GET)
-    @ResponseBody
-    public List<Post> getPostsByCategory(@PathVariable int categoryId) {
-        return dao.getPostsByCategoryId(categoryId);
-    }
-
+//    @RequestMapping(value = "/category/id/{categoryId}/posts/all", method = RequestMethod.GET)
+//    @ResponseBody
+//    public List<Post> getPostsByCategory(@PathVariable int categoryId) {
+//        return dao.getPostsByCategoryId(categoryId);
+//    }
     @RequestMapping(value = "/category/id/{categoryId}/posts/visible", method = RequestMethod.GET)
     @ResponseBody
     public List<Post> getVisiblePostsByCategory(@PathVariable int categoryId) {
@@ -136,12 +195,11 @@ public class DisplayController {
         return dao.getNextVisiblePostsByCategoryId(categoryId, startingPost, numberOfPosts);
     }
 
-    @RequestMapping(value = "/tag/id/{tagId}/posts/all", method = RequestMethod.GET)
-    @ResponseBody
-    public List<Post> getPostsByTag(@PathVariable int tagId) {
-        return dao.getPostsByTagId(tagId);
-    }
-
+//    @RequestMapping(value = "/tag/id/{tagId}/posts/all", method = RequestMethod.GET)
+//    @ResponseBody
+//    public List<Post> getPostsByTag(@PathVariable int tagId) {
+//        return dao.getPostsByTagId(tagId);
+//    }
     @RequestMapping(value = "/tag/id/{tagId}/posts/visible", method = RequestMethod.GET)
     @ResponseBody
     public List<Post> getVisiblePostsByTag(@PathVariable int tagId) {
@@ -206,21 +264,21 @@ public class DisplayController {
         return dao.getTopTags();
     }
 
+    //</editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Page REST endpoints">
     @RequestMapping(value = "/page/{pageId}", method = RequestMethod.GET)
     @ResponseBody
     public Page getPage(@PathVariable int pageId) {
         return dao.getPageById(pageId);
     }
 
-    //</editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="Page REST endpoints">
     @RequestMapping(value = "/pages/all", method = RequestMethod.GET)
     @ResponseBody
     public List<Page> getAllPages() {
         return dao.getAllPages();
     }
-    
-    @RequestMapping(value ="/pages/parents", method=RequestMethod.GET)
+
+    @RequestMapping(value = "/pages/parents", method = RequestMethod.GET)
     @ResponseBody
     public List<Page> getOnlyParentPages() {
         return dao.getParentPages();

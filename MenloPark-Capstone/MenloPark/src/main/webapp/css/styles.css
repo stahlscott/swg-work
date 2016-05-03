@@ -15,6 +15,23 @@ and open the template in the editor.
         background-repeat: no-repeat;
     background-color: #666600;
 }*/
+
+.navbar-fixed-bottom {
+    /*    background-color: #eaa748 for browsers that do not support gradients */
+    background: -webkit-linear-gradient(top, rgba(234, 167, 72, 0), rgba(234, 167, 72, 1));
+    background: -o-linear-gradient(top ,rgba(234,167,72,0), top(234,167,72,1));
+    background: -moz-linear-gradient(top, rgba(234, 167, 72, 0), rgba(234, 167, 72 ,1));
+}
+
+body {
+    margin-bottom: 66px;
+    height: 100%;
+}
+
+html {
+    height: 100%;
+}
+
 a:link {
     text-decoration: none;
 }
@@ -65,7 +82,7 @@ span.glyphicon-home {
 
 }
 #clear-pages-button {
-   padding: 3px 10px;
+    padding: 3px 10px;
 }
 
 /*draggable navbar ui */
@@ -91,61 +108,55 @@ span.glyphicon-home {
     background-color: white;
 }
 
-/*#sortable li span { 
-    position: absolute; 
-    margin-left: -1.3em; 
+#nav.affix {
+    z-index: 1;
+    top: 0px;
+    width: 80%;
+}
+
+#sidebar.affix {
+    z-index: 1;
+    bottom: 30px;
+    top: 70px;
+}
+
+/*#sidebar.affix-bottom {
+    bottom: 30px;
+    width: 27.5%;
 }*/
 
-
-/*.tag {
-    width: 20px;
-    text-transform: lowercase;
-    border:#999;
-    border-style: solid;
-    padding: 0px;
-}*/
-
-/* displays dropdown on hover */
-.dropdown:hover .dropdown-menu {
-    display: block;
+@media viewport and (max-width: 768px) {
+    #sidebar {
+        position: relative;
+    }         
 }
-
-#nav {
-  position:relative;
-  z-index:1;
-}
-
-/*@media only screen and (min-width:0px) {
-.dropdown:hover .dropdown-menu {
-    display: block;
-}
-.dropdown-submenu {
-    position: relative !important;
-}
-
-.dropdown-submenu>.dropdown-menu {
-    top: 0 !important;
-    left: 100% !important;
-    margin-top: -6px !important;
-    margin-left: -1px !important;
-    border-radius: 0 !important;
-}
-
-.dropdown-submenu:hover>.dropdown-menu {
-    display: block !important;
-}
-
-.dropdown-submenu>a:after {
-    display: block;
-    content: "\f105";
-    font-family: 'FontAwesome';
-    margin-top: -18px;
-    right: 15px;
-    position: absolute;
-    font-weight: 300;
-}
-}*/
 
 .admin-box {
     width:50px;
+}
+
+/* for glyphicon input styling */
+.inner-addon {
+    position: relative;
+}
+.inner-addon .glyphicon {
+    position: absolute;
+    padding: 10px;
+    pointer-events: none;
+}
+
+.left-addon .glyphicon {
+    left: 0px;
+}
+
+.right-addon .glyphicon {
+    right: 0px;
+}
+
+.left-addon input {
+    padding-left: 30px;
+}
+
+.right-addon input {
+    padding-right: 30px;
 }

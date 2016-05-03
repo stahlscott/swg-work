@@ -20,10 +20,13 @@
     <body>
         <span id="page-context" data-context="${pageContext.request.contextPath}"></span>
         <span id="post-id" data-post-id="${postId}"></span>
-        <span id="tag-id" data-tag-id="${tagId}"></span>
+        <span id="tag-id" data-tag-id="${tagId}" data-tag-name="${tagName}"></span>
 
         <div class="container">
             <jsp:include page="headerFragment.jsp"/>
+            <div class="alert alert-info text-left">
+                Viewing all posts within tag "<span id="display-tag-name" style="font-weight: bold;">${tagName}</span>"
+            </div>
 
             <div class="row">
                 <div id="main-content" class="col-sm-8"> 

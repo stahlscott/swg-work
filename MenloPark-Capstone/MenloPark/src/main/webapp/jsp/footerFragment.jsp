@@ -3,22 +3,33 @@
     Created on : Apr 20, 2016, 12:44:38 PM
     Author     : Scott Stahl <stahl.scott@gmail.com>
 --%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
-<footer class="footer">
+<nav class="footer navbar-fixed-bottom">
     <div class="container">
-        <hr/>
-        <p class="text-center text-muted">
-
-            &copy; 2016 Les Sportinggoods | <a href= "${pageContext.request.contextPath}/login">Login</a> 
-
+        <br><p class="text-center">
+            &copy; 2016 Les Sportinggoods | 
+            <sec:authorize access="isAuthenticated()">
+                <a href="${pageContext.request.contextPath}/editor/console">User Console</a> | 
+                <a href="${pageContext.request.contextPath}/j_spring_security_logout">Log Out</a> | 
+            </sec:authorize>
+            <%--<sec:authorize access="isAnonymous()">--%>
+            | <a href= "${pageContext.request.contextPath}/login">Login</a>
+            <%--</sec:authorize>--%>
         </p>
     </div>
-    <script src="${pageContext.request.contextPath}/js/jquery-1.11.3.min.js"></script>
-    <script src="${pageContext.request.contextPath}/js/jquery-ui.min.js"></script>
-    <script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
-<!--    <script src="${pageContext.request.contextPath}/js/jquery.smartmenus.min.js"></script>
-    <script src="${pageContext.request.contextPath}/js/jquery.smartmenus.bootstrap.min.js"></script>
-    <script src="${pageContext.request.contextPath}/js/bootstrap-hover-dropdown.min.js"></script>-->
-    <script src="${pageContext.request.contextPath}/scripts/header.js"></script>
-    <script src="${pageContext.request.contextPath}/scripts/displaySidebar.js"></script>
-</footer>
+</nav>
+
+<sec:authorize access="hasRole('ROLE_ADMIN')">
+    <span id="role-admin"></span>
+</sec:authorize>
+<sec:authorize access="hasRole('ROLE_EDITOR')">
+    <span id="role-editor"></span>
+</sec:authorize>
+<span id="page-context" data-context="${pageContext.request.contextPath}"></span>
+
+<script src="${pageContext.request.contextPath}/js/jquery-1.11.3.min.js"></script>
+<script src="${pageContext.request.contextPath}/js/jquery-ui.min.js"></script>
+<script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
+<script src="${pageContext.request.contextPath}/scripts/header.js"></script>
+<script src="${pageContext.request.contextPath}/scripts/displaySidebar.js"></script>

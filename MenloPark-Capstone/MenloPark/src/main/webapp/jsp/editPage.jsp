@@ -28,7 +28,7 @@
 
                             <form class="form-inline" id="add-page-form" method="POST">
 
-                                <label for="add-page-title">New Page Title:</label>
+                                <label for="add-page-title" id="label-title">New Page Title:</label>
                                 <strong><input class="required" id="add-page-title" placeholder="Page Title"/></strong>
                                 <br/>
 
@@ -38,7 +38,7 @@
 
                             <!-- tiny MCE goes here -->
 
-                            <textarea id="add-page-content" class="required" name="add-page-content">This is where you can add a page! <b>Style it</b> <u>however you</u> <i>like.</i></textarea>
+                            <textarea id="add-page-content" name="add-page-content"></textarea>
 
 
                             <!-- tag box well, where tags appear -->
@@ -55,8 +55,8 @@
                             <input type="text" class="hidden" id="page-id" />
 
                             <div class="form-group pull-right">
-                                <a href="${pageContext.request.contextPath}/"<button type="button" id="cancel" class="btn btn-default">Cancel</button></a>
-                                <button type="button" onclick="submitPage()" id="add-edit-page" class="btn btn-primary disabled">Submit</button>
+                                <button type="button" onclick="resetPage()" id="cancel" class="btn btn-default">Cancel</button>
+                                <button type="button" onclick="submitPage()" id="add-edit-page" class="btn btn-primary">Submit</button>
 
                             </div>
                             </form>
@@ -68,7 +68,7 @@
 
                 <div class="col-sm-4" id="side-bar">
                     <div class="well">
-                        <h3 class="text-center">Parent Pages</h3>
+                        <h3 class="text-center">Select Parent Page</h3>
                         <p id="page-list" class="text-left">
                         </p>
                         <button id="clear-pages-button" class="btn btn-default" type="button" onclick="clearPages()">Clear</button>
@@ -78,12 +78,6 @@
                         <h3>Current Pages</h3>
                         <p>
                         <ul style="list-style-type: none; text-align: left;" id="current-pages">
-                            <c:forEach var="page" items="${pageList}">
-                                <li>
-                                    <a href="${pageContext.request.contextPath}/page/display/${page.pageId}">${page.pageName}</a> - 
-                                    <a onclick="insertPageLink(${page.pageId}, '${page.pageName}')">Insert Page Link</a>
-                                </li>
-                            </c:forEach>
                         </ul>
                     </div>
                 </div>
