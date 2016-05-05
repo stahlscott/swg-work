@@ -6,6 +6,8 @@
 package com.tsg.menlopark.dto;
 
 import java.util.Objects;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  *
@@ -13,6 +15,8 @@ import java.util.Objects;
  */
 public class Tag {
     private int tagId;
+    @NotEmpty(message = "You must enter a tag name.")
+    @Length(max = 140, message="Tag must be no more than 140 characters.")
     private String name;
     private int numberOfOccurences;
 

@@ -41,7 +41,11 @@
                                 </a>
                             </div>
                             <div class="collapse navbar-collapse" id="navbar-preview">
-                                <ul id="nav-main" class="nav navbar-nav sm sm-simple"></ul>
+                                <ul id="nav-main" class="nav navbar-nav sm sm-simple">
+                                    <li id="nav-page-none"><a href="#">About Us</a></li>
+                                    <li id="nav-page-none1"><a href="#">Hours</a></li>
+                                    <li id="nav-page-none2"><a href="#">Contact Us</a></li>
+                                </ul>
                             </div>
                         </div>
                     </nav>

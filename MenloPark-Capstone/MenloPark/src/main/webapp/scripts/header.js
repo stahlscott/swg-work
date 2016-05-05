@@ -8,6 +8,8 @@
 $(document).ready(function () {
 //    $('#nav-main').smartmenus();
     populateNavbar();
+    spinnaz();
+    noSpinnaz();
 });
 
 function populateNavbar() {
@@ -60,3 +62,19 @@ function populateNavbar() {
         });
     });
 }
+
+//<editor-fold desc="Super Secret Stuff">
+
+function spinnaz() {
+    $('#header-img').mouseenter(function () {
+        $(this).addClass('spinnaz');
+    });
+}
+
+function noSpinnaz() {
+    $('#header-img').mouseleave(function () {
+        $(this).removeClass('spinnaz');
+    });
+}
+
+//</editor-fold>

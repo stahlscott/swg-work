@@ -6,6 +6,7 @@
 package com.tsg.menlopark.dto;
 
 import java.util.Objects;
+import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  *
@@ -13,6 +14,7 @@ import java.util.Objects;
  */
 public class Category {
     private int categoryId;
+    @NotEmpty(message = "You must enter a category name.")
     private String name;
 
     public int getCategoryId() {

@@ -35,7 +35,7 @@
 
                             <!-- tiny MCE goes here -->
 
-                            <textarea id="add-post-content" name="add-post-content">This is where you can add a post! <b>Style it</b> <u>however you</u> <i>like.</i></textarea>
+                            <textarea id="add-post-content" name="add-post-content" placeholder="This is where you can add a post! "></textarea>
 
 
                             <!-- tag box well, where tags appear -->
@@ -43,10 +43,9 @@
                                 <span class="text-left text-muted tag" id="tag-box"></span>
                             </div>
 
-
                             <!-- tag box input -->
 
-                            <input class="typeahead tt-query" id="tag-box-input" autocomplete="off" spellcheck="false" placeholder="Separate, tags, by commas" />&nbsp;<button id="add-tag-button" class="btn btn-group-sm" type="button" onclick="addTags()">Add Tag</button>
+                            <input class="typeahead tt-query" id="tag-box-input" autocomplete="off" spellcheck="false" placeholder="Separate, tags, by commas" />&nbsp&nbsp;<button id="add-tag-button" class="btn btn-group-sm" type="button" onclick="addTags()">Add Tag</button>&nbsp
                             <button id="clear-tags-button" class="btn btn-group-sm" type="button" onclick="clearTags()">Clear Tag List</button>
 
                             <div class="pull-right">
@@ -74,9 +73,9 @@
                                 <input type="text" class="hidden" id="post-id" />
 
                                 <div class="col-sm-4 text-right">
-                                    <button type="button" id="preview" class="btn btn-default" data-toggle="modal" data-target="#postPreviewModal">Save & Preview</button>
-                                    <button type="button" onclick="resetPage(false)" id="cancel" class="btn btn-default">Cancel</button>
-                                    <button type="button" onclick="submitPost()" id="add-edit-post" class="btn btn-primary">Submit Post</button>
+                                    <button type="button" id="preview" class="btn btn-info" data-toggle="modal" data-target="#postPreviewModal">Save & Preview</button><br>
+                                    <button type="button" onclick="resetPage(false)" id="cancel" class="btn btn-primary">Cancel</button>
+                                    <button type="button" onclick="submitPost()" id="add-edit-post" class="btn btn-success">Submit Post</button>
 
                                 </div>
                             </div>
@@ -122,6 +121,7 @@
                             tinymce.init({
                                 selector: '#add-post-content',
                                 plugins: "media image"
+
                                         //                menubar: "insert",
                                         //                toolbar: "media image"
                             });

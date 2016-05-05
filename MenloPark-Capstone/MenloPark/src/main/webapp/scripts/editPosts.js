@@ -3,33 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
+var pageContext;
+
 $(document).ready(function () {
     populateCategories();
-//    getTags();
+    getTags();
     $('#post-date-picker').datepicker();
     $('#exp-date-picker').datepicker();
-//    $('#tag-box-input').autocomplete({
-//        source: allTheTags,
-//        minLength: 2
+
+    pageContext = $('#page-context').data("context");
 });
 
-//function getTags() { ON HOLD for now
-//    $.ajax({
-//        type: 'GET',
-//        url: '/tags/all'
-//    }).success(function (data, status) {
-//
-//        for (var i = 0; i < data.length; i++) {
-//
-//            allTheTags[i] = data[i].name;
-//        }
-//
-//
-//
-//    }).error(function () {
-//        alert('wat');
-//    });
-//}
+// <editor-fold desc="SUBMIT POST function">
 
 function submitPost() {
 
@@ -100,7 +86,7 @@ function submitPost() {
 
     $.ajax({
         type: 'POST',
-        url: $('#page-context').data("context") + '/editor/post',
+        url: pageContext + '/editor/post',
         data: JSON.stringify({
             userName: $('#the-username').text(),
             postTitle: $('#add-post-title').val(),
@@ -125,11 +111,21 @@ function submitPost() {
                 + '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a></div>');
         resetPage(true);
         return post.postId;
-    }).error(function (post, status) {
-        $('#alertDiv').html('<div class="alert alert-danger"><span class="glyphicon glyphicon-alert"></span><strong> Attention!</strong> Your post has not been submitted.'
-                + '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a><br>Errors abound.</div>');
+    }).error(function (data, status) {
+        var errDiv = $('#alertDiv');
+        errDiv.empty();
+
+        $.each(data.responseJSON.fieldErrors, function (index, validationError) {
+            errDiv.append('<div class="alert alert-danger"><span class="glyphicon glyphicon-alert"></span><strong> Attention!</strong> Your post has not been submitted.'
+                    + '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a><br>'
+                    + validationError.message + '</div>');
+        });
     });
 }
+
+//</editor-fold>
+
+// <editor-fold desc="Tag functions">
 
 function addTags() {
     var input = $('#tag-box-input').val();
@@ -167,20 +163,26 @@ function getAndDisplayTag(tag, index) {
         }
     });
 }
-var allTheTags;
+
 function getTags() {
+    var allTheTags = [];
     $.ajax({
         type: 'GET',
         url: $('#page-context').data("context") + '/tags/all'
     }).success(function (data, status) {
         $.each(data, function (index, tag) {
-            for (var i = 0; i < tag.length; i++) {
-                allTheTags.push(tag.tagName);
-            }
+
+            allTheTags.push(tag.name);
+        });
+        $('#tag-box-input').autocomplete({
+            source: allTheTags,
+            minLength: 2
         });
     });
 }
+// </editor-fold>
 
+// <editor-fold desc="CATEGORY functions">
 function populateCategories() {
     $.ajax({
         type: 'GET',
@@ -261,6 +263,10 @@ function editCategory(catId) {
     }
 }
 
+// </editor-fold>
+
+// <editor-fold desc="Generate POST functions">
+
 function generatePostSummary() {
     var postSummary = $('#edit-accordion');
     postSummary.empty();
@@ -278,7 +284,6 @@ function generatePostSummary() {
 //                suffix = '</i>';
             } else if (header.draft) {
                 tabId = 'draft';
-
             } else {
                 tabId = header.postDateTime[0] + header.postDateTime[1];
             }
@@ -286,10 +291,10 @@ function generatePostSummary() {
             if (!$('#body-' + tabId).length) {
                 var basePanel = '';
                 basePanel += '<div class="panel panel-default">';
-                basePanel += '<div class="panel-heading" role="tab" id="heading' + tabId + '">';
+                basePanel += '<div class="panel-heading" role="tab" id="heading-' + tabId + '">';
                 basePanel += '<h4 class="panel-title">';
-                basePanel += '<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-'
-                        + tabId + '" aria-expanded="false" aria-controls="collapse' + tabId + '">';
+                basePanel += '<a class="collapsed" role="button" data-toggle="collapse" data-parent="#edit-accordion" href="#collapse-'
+                        + tabId + '" aria-expanded="false" aria-controls="collapse-' + tabId + '">';
 
                 if (tabId === 'flagged') {
                     basePanel += 'Flagged For Review';
@@ -302,7 +307,7 @@ function generatePostSummary() {
                 basePanel += '</a>';
                 basePanel += '</h4>';
                 basePanel += '</div>';
-                basePanel += '<div id="collapse-' + tabId + '" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading' + tabId + '">';
+                basePanel += '<div id="collapse-' + tabId + '" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-' + tabId + '">';
                 basePanel += '<div class="panel-body text-left" id="body-' + tabId + '">';
                 basePanel += '</div>';
                 basePanel += '</div>';
@@ -313,11 +318,17 @@ function generatePostSummary() {
             var monthPanel = $('#body-' + tabId);
 
             var postLink = '';
-            postLink += '<li><a href="' + $('#page-context').data("context") + '/post/display/' + header.postId + '">'
+            postLink += '<li><a href="' + $('#page-context').data("context") + '/editor/post/display/' + header.postId + '">'
                     + header.postTitle + '</a> | <a onclick="generatePost(' + header.postId + ')">Edit</a>';
+
+            if ($('#role-admin').length) {
+                postLink += '&nbsp;|&nbsp;<a onclick="deletePost(' + header.postId + ')" style="color: red;">Delete</a>';
+            }
+
             if (header.flaggedForReview && header.draft) {
                 postLink += ' <i class="text-muted">Draft</i>';
             }
+
             postLink += '</li>';
             monthPanel.append(postLink);
         });
@@ -341,6 +352,7 @@ function generatePost(postId) {
         post.tagNames.forEach(getAndDisplayTag);
         post.categoryIds.forEach(checkCategories);
         $('#add-edit-post').text('Edit Post');
+        $('#add-edit-post').css('width', '95px');
         $('#add-edit-post').attr('onclick', 'submitPostEdit(' + post.postId + ')');
 //        $('#preview').show();
 //        $('#preview').attr('onclick', 'previewPost(' + post.postId + ')');
@@ -353,6 +365,7 @@ function generatePost(postId) {
         }
     });
 }
+//</editor-fold>
 
 function checkCategories(catId) {
     $('#cat' + catId).prop('checked', true);
@@ -361,6 +374,8 @@ function checkCategories(catId) {
 function uncheckAllCategories() {
     $('.category-checkbox').prop('checked', false);
 }
+
+// <editor-fold desc="EDIT POST functions">
 
 function submitPostEdit(postId) {
     $('#alertDiv').empty();
@@ -451,10 +466,36 @@ function submitPostEdit(postId) {
         resetPage(true);
 
     }).error(function (data, status) {
-        $('#alertDiv').html('<div class="alert alert-danger"><span class="glyphicon glyphicon-alert"></span><strong> Attention!</strong> Your post has not been submitted.'
-                + '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a><br>Errors abound.</div>');
+        var errDiv = $('#alertDiv');
+        errDiv.empty();
+
+        $.each(data.responseJSON.fieldErrors, function (index, validationError) {
+            errDiv.append('<div class="alert alert-danger"><span class="glyphicon glyphicon-alert"></span><strong> Attention!</strong> Your post has not been submitted.'
+                    + '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a><br>'
+                    + validationError.message + '</div>');
+        });
     });
 }
+
+//</editor-fold>
+
+//<editor-fold desc="DELETE POST function">
+function deletePost(postId) {
+    if (confirm("Are you sure you want to delete this post?")) {
+        $.ajax({
+            type: 'DELETE',
+            url: pageContext + '/editor/post/' + postId
+        }).success(function (data, status) {
+            alert("Post deleted.");
+            generatePostSummary();
+        }).error(function (data, status) {
+            alert("Post not deleted.");
+        });
+    }
+}
+
+
+//</editor-fold>
 
 function resetPage(skipConfirm) {
     if (skipConfirm || confirm('Are you sure you want to clear your current work?')) {
@@ -482,13 +523,8 @@ $('#flagged').click(function () {
     }
 });
 
-//function previewPost(postId) {
-//    $('#draft').prop('checked', true);
-//    submitPostEdit(postId);
-//    window.open(($('#page-context').data("context") + '/editor/post/display/' + postId), '_blank', '');
-//}
 
-
+// <editor-fold desc="Preview Modal">
 $('#postPreviewModal').on('show.bs.modal', function (event) {
     $('#preview-content').empty();
     var element = $(event.relatedTarget);
@@ -531,7 +567,7 @@ $('#postPreviewModal').on('show.bs.modal', function (event) {
     var tagArr = $('.attached-tag').map(function () {
         return $(this).text().substring(1);
     }).get();
-    
+
     for (var i = 0; i < tagArr.length; i++) {
         currentPost += '<span class="attached-tag" id="tag' + tagArr[i] + '"><span class="label label-default"><a href="#">#' + tagArr[i] + '</a></span></span>&nbsp;';
 
@@ -550,3 +586,5 @@ $(".modal-wide").on("show.bs.modal", function () {
     var height = $(window).height() - 200;
     $(this).find(".modal-body").css("max-height", height);
 });
+
+//</editor-fold>

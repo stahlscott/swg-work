@@ -16,6 +16,7 @@
         <link rel="shortcut icon" href="${pageContext.request.contextPath}/img/icon.png">
     </head>
     <body>
+        <span style="display: none;" id="logged"><sec:authentication property="principal.username" /></span>
         <div class="container">
             <jsp:include page="headerFragment.jsp"/>
             <span id="page-context" data-context="${pageContext.request.contextPath}"></span>
@@ -29,7 +30,7 @@
                         </div>
                         <div class="panel-body">
                             <p class="text-muted" style="font-size: small;">
-                                User-created Drafts will appear here. Drafts have not been published nor have they been submitted for approval.<br>
+                                User-created Drafts will appear here. Drafts are posts that have not been published nor have they been submitted for approval.
                                 A draft will only be submitted for approval when the author de-selects "Save as Draft" on the edit screen.
                             </p>
                             <table class="table table-striped" id="draft-posts">
@@ -55,8 +56,8 @@
                         </div>
                         <div class="panel-body">
                             <p class="text-muted" style="font-size: small;">
-                                Submitted posts that have not been administrator-approved will appear here. User can delete those posts from this window. <br>
-                                To edit a post, select "Create/Edit a Blog Post" from the User Console panel. 
+                                Submitted posts that have not been administrator-approved will appear here. <br>
+                                To edit or delete a post, select "Create/Edit a Blog Post" from the User Console panel. 
                             </p>
                             <table class="table table-striped" id="unapproved-posts">
                                 <thead>
@@ -64,7 +65,6 @@
                                         <th>Author</th>
                                         <th>Date Submitted</th>
                                         <th>Returned Comments</th>
-                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="unapproved-posts-body">
@@ -72,7 +72,9 @@
                                 </tbody>
                             </table>
 
+                            <div id="alert-div-lower">
 
+                            </div>
                         </div>
                     </div>
 

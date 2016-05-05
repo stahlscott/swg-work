@@ -58,8 +58,8 @@
                             <ol class="sortable" id="page-sort">
                             </ol>
                             <br>
-                            <button type="button" class="btn btn-primary" onclick="submitPages()">Submit</button>
-                            <button type="button" class="btn btn-default" onclick="refreshPages()">Refresh</button>
+                            <button id="admin" type="button" class="btn btn-primary" onclick="submitPages()">Submit</button>
+                            <button id="admin1" type="button" class="btn btn-default" onclick="refreshPages()">Refresh</button>
                             <br>
                             <div id="alert-div">
                                 
@@ -69,7 +69,7 @@
                 </div><!-- end of main content -->
 
                 <div class="col-sm-4" id="side-bar">
-                    <div class="panel panel-danger">
+                    <div class="panel panel-danger" id="swell">
                         <div class="panel-heading"><h4><strong>Welcome, <span id="the-username"><sec:authentication property="principal.username" /></span>!</strong></h4>
                         </div>
                         <div class="panel-body">
