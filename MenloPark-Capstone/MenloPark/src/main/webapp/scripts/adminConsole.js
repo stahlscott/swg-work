@@ -65,10 +65,9 @@ function rejectPost(postId, reason) {
         },
         'dataType': 'json'
     }).success(function (status) {
-        alert('it work');
+        alert('Successfully rejected.');
         //getting back a 202 but it thinks it's an error. it's not an error. patch is weird apparently. thing works.
     });
-
 
 }
 
@@ -86,8 +85,8 @@ function approvePost(postId) {
         'dataType': 'json'
     }).success(function (status) {
         //alert('it work'); //could add an alert div here
-        $('#alertDivUpper').html('<div class="alert alert-success"><span class="glyphicon glyphicon-ok"></span><strong> Success!</strong> Post has been approved.<br>\n\
-                <em>If the post does not disappear, it may also be listed as a Draft by the author.' + '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a></div>');
+        $('#alertDivUpper').html('<div class="alert alert-success"><span class="glyphicon glyphicon-ok"></span><strong> Success!</strong> Post has been approved.<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>' + 
+                '<br><em>If the post does not disappear, it may also be listed as a Draft by the author.</div>');
         clearAwaitingApprovalBox();
         populateUnapprovedPosts();
     });

@@ -21,7 +21,28 @@ and open the template in the editor.
     background: -webkit-linear-gradient(top, rgba(234, 167, 72, 0), rgba(234, 167, 72, 1));
     background: -o-linear-gradient(top ,rgba(234,167,72,0), top(234,167,72,1));
     background: -moz-linear-gradient(top, rgba(234, 167, 72, 0), rgba(234, 167, 72 ,1));
+    height: 35px;
+    margin: 0;
+    padding-bottom: 10px;
+    font-size: 0.85em;
 }
+
+.spinnaz {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 120px;
+    height: 120px;
+    margin:-60px 0 0 -60px;
+    -webkit-animation:spin 0.5s linear infinite;
+    -moz-animation:spin 0.5s linear infinite;
+    animation:spin 0.5s linear infinite;
+}
+
+@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+
 
 body {
     margin-bottom: 66px;
@@ -43,7 +64,7 @@ a h1 {
     color: #ec971f;
     text-decoration: none;
     font-family: 'Walter Turncoat', cursive;
-    font-size: 40px;;
+    font-size: 40px;
     font-weight: 150px;
     margin-top: 40px;
 
@@ -81,8 +102,62 @@ span.glyphicon-home {
     word-wrap: break-word;
 
 }
+
+#tag-box-input {
+    height: 27px;
+}
+
+#add-tag-button, #clear-tags-button {
+    background-color: silver;
+    padding: 4px 8px;
+    margin-bottom: 1px;
+}
 #clear-pages-button {
+    background-color: silver;
     padding: 3px 10px;
+}
+
+#preview {
+    color: black;
+    background-color: silver;
+    border: none;
+    width: 163px;
+}
+
+#cancel  {
+    color: black;
+    background-color: silver;
+    border: none;
+    margin-top: 5px;
+    padding: 5px 10px;
+}
+
+#add-edit-post {
+    background-color: #ec971f;
+    color: black;
+    border: none;
+    margin-top: 5px;
+    padding: 5px 10px;
+}
+
+#add-edit-page {
+    background-color: #ec971f;
+    color: black;
+    border: none;
+    margin-top: 5px;
+    padding: 5px 10px;
+}
+
+#admin {
+    color: black;
+    background-color: silver;
+    border: none;
+}
+
+#admin1 {
+    color: black;
+    background-color: #ec971f;
+    border: none;
 }
 
 /*draggable navbar ui */
@@ -114,6 +189,12 @@ span.glyphicon-home {
     width: 80%;
 }
 
+@media (min-width: 1024px) {
+    #sidebar {
+        width: 360px;
+    }
+}
+
 #sidebar.affix {
     z-index: 1;
     bottom: 30px;
@@ -125,10 +206,10 @@ span.glyphicon-home {
     width: 27.5%;
 }*/
 
-@media viewport and (max-width: 768px) {
+@media (max-width: 768px) {
     #sidebar {
         position: relative;
-    }         
+    }      
 }
 
 .admin-box {

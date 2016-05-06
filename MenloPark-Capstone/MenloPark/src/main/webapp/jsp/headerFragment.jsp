@@ -6,7 +6,7 @@
 
 <div class="row"  >
     <div class="col-sm-3" style="padding-right: 0px;">
-        <a href="${pageContext.request.contextPath}/"><img src="${pageContext.request.contextPath}/assets/mountains2.png" style="" alt="image" class="img-responsive" /></a>
+        <a href="${pageContext.request.contextPath}/"><img src="${pageContext.request.contextPath}/assets/mountains2.png" style="" id="header-img" alt="image" class="img-responsive" /></a>
         <link href='https://fonts.googleapis.com/css?family=Carter+One' rel='stylesheet' type='css/styles.css' />
         <link href='https://fonts.googleapis.com/css?family=Contrail+One' rel='stylesheet' type='css/styles.css'>
         <link href='https://fonts.googleapis.com/css?family=Cutive' rel='stylesheet' type='css/styles.css'>

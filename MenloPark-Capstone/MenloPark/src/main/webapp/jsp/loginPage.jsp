@@ -54,7 +54,7 @@
                 </div><!-- end of main content -->
 
                 <div class="col-sm-4" id="side-bar">
-                    <jsp:include page="sidebarFragment.jsp"/>
+                    <%--<jsp:include page="sidebarFragment.jsp"/>--%>
                 </div>
             </div>  <!-- footer here -->
 

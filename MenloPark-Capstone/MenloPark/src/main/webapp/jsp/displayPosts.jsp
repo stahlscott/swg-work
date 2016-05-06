@@ -36,7 +36,7 @@
         </div>
 
         <p class="hidden" id="pc">${pageContext.request.contextPath}</p>
-
+        <br><br>
         <jsp:include page="postPageFragment.jsp"/>
         <script src="${pageContext.request.contextPath}/scripts/displayPosts.js"></script>
     </body>

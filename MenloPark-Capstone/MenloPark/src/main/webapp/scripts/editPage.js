@@ -84,8 +84,14 @@ function submitPage() {
                 + '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a></div>');
         resetPage(true);
     }).error(function (data, status) {
-        $('#alertDiv').html('<div class="alert alert-danger"><span class="glyphicon glyphicon-alert"></span><strong> Attention!</strong> Your page has not been submitted.'
-                + '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a><br>Errors abound.</div>');
+        var errDiv = $('#alertDiv');
+        errDiv.empty();
+
+        $.each(data.responseJSON.fieldErrors, function (index, validationError) {
+            errDiv.append('<div class="alert alert-danger"><span class="glyphicon glyphicon-alert"></span><strong> Attention!</strong> Your post has not been submitted.'
+                    + '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a><br>'
+                    + validationError.message + '</div>');
+        });
     });
 }
 
@@ -222,7 +228,13 @@ function editPage(pageId) {
         resetPage(true);
 
     }).error(function (data, status) {
-        $('#alertDiv').html('<div class="alert alert-danger"><span class="glyphicon glyphicon-alert"></span><strong> Attention!</strong> Your changes have not been submitted.'
-                + '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a><br>Errors abound.</div>');
+        var errDiv = $('#alertDiv');
+        errDiv.empty();
+
+        $.each(data.responseJSON.fieldErrors, function (index, validationError) {
+            errDiv.append('<div class="alert alert-danger"><span class="glyphicon glyphicon-alert"></span><strong> Attention!</strong> Your post has not been submitted.'
+                    + '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a><br>'
+                    + validationError.message + '</div>');
+        });
     });
 }

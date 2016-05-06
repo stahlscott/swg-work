@@ -45,7 +45,7 @@ function loadPosts(startOfRange) {
             currentPost += '<p style="text-align: right;">' + '<a data-identifier="' + post.postId + '" data-toggle="modal" data-post-id="'
                     + post.postId + '" data-target="#postPageModal">Read More...</a></p>';
             currentPost += '</div>';
-            currentPost += '<div class = "panel-footer" >';
+            currentPost += '<div class = "panel-footer"';
             currentPost += '<h4>';
             currentPost += '<small>';
 

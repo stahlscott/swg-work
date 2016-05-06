@@ -7,16 +7,16 @@
 
 <nav class="footer navbar-fixed-bottom">
     <div class="container">
-        <br><p class="text-center">
-            &copy; 2016 Les Sportinggoods | 
+        <br><p class="text-center" style="text-align: match-parent;">
+            <a href="${pageContext.request.contextPath}/assets/LESSPORTINGGOODSresize.jpg">&copy;</a> 2016 Les Sportinggoods | 
             <sec:authorize access="isAuthenticated()">
                 <a href="${pageContext.request.contextPath}/editor/console">User Console</a> | 
                 <a href="${pageContext.request.contextPath}/j_spring_security_logout">Log Out</a> | 
             </sec:authorize>
             <%--<sec:authorize access="isAnonymous()">--%>
-            | <a href= "${pageContext.request.contextPath}/login">Login</a>
+           <a href= "${pageContext.request.contextPath}/login">Login</a>
             <%--</sec:authorize>--%>
-        </p>
+            </p>
     </div>
 </nav>
 

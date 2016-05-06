@@ -6,6 +6,8 @@
 package com.tsg.menlopark.dto;
 
 import java.util.Objects;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  *
@@ -14,7 +16,10 @@ import java.util.Objects;
 public class Page {
     private int pageId;
     private int userId;
+    @NotEmpty(message = "You must enter a post name.")
+    @Length(max = 140, message="Name must be no more than 140 characters.")
     private String pageName;
+    @NotEmpty(message = "You must enter page content.")
     private String pageContent;
     private int displayIndex;
     private Integer parentId; //settable to null, as per database requirements

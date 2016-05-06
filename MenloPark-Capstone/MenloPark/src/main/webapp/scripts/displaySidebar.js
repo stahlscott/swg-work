@@ -10,6 +10,10 @@ $(document).ready(function () {
     generatePostSummary();
 });
 
+//$(window).scroll(function () {
+//    $('#sidebar').width($('#tag-cloud').width());
+//});
+
 function generateTagCloud() {
     var tagCloud = $('#tag-cloud');
     tagCloud.empty();
@@ -65,7 +69,8 @@ function generatePostSummary() {
                 basePanel += '<div class="panel panel-default">';
                 basePanel += '<div class="panel-heading" role="tab" id="heading' + dateId + '">';
                 basePanel += '<h4 class="panel-title">';
-                basePanel += '<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse' + dateId + '" aria-expanded="false" aria-controls="collapse' + dateId + '">';
+                basePanel += '<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse'
+                        + dateId + '" aria-expanded="false" aria-controls="collapse' + dateId + '">';
                 basePanel += months[header.postDateTime[1] - 1] + ' ' + header.postDateTime[0];
                 basePanel += '</a>';
                 basePanel += '</h4>';
