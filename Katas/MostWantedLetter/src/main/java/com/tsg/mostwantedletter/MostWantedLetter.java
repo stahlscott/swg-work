@@ -29,16 +29,16 @@ public class MostWantedLetter {
         Collection<String> letters = letterMap.keySet();
         
         String topChar = "zz";
-        int maxNumOfOccurences = 0;
+        int maxNumOfOccurrences = 0;
 
         for (String letter : letters) {
-            int occurences = letterMap.get(letter);
-            if (occurences > maxNumOfOccurences) {
+            int occurrences = letterMap.get(letter);
+            if (occurrences > maxNumOfOccurrences) {
                 topChar = letter;
-                maxNumOfOccurences = occurences;
-            } else if (occurences == maxNumOfOccurences && topChar.compareTo(letter) > 0) {
+                maxNumOfOccurrences = occurrences;
+            } else if (occurrences == maxNumOfOccurrences && topChar.compareTo(letter) > 0) {
                 topChar = letter;
-                maxNumOfOccurences = occurences;
+                maxNumOfOccurrences = occurrences;
             }
         }
 
