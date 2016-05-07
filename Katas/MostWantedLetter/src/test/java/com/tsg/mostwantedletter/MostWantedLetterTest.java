@@ -32,8 +32,6 @@ public class MostWantedLetterTest {
     //
     // @Test
     // public void hello() {}
-
-
     @Test
     public void MostWantedLetterTest() {
         MostWantedLetter tester = new MostWantedLetter();
@@ -43,5 +41,11 @@ public class MostWantedLetterTest {
         assertEquals("o", tester.mostWantedLetter("Oops!"));
         assertEquals("a", tester.mostWantedLetter("AAaooo!!!!"));
         assertEquals("a", tester.mostWantedLetter("abe"));
+        // check one letter
+        assertEquals("a", tester.mostWantedLetter("a"));
+        assertEquals("z", tester.mostWantedLetter("z"));
+        //check empty & null
+        assertEquals("", tester.mostWantedLetter(""));
+        assertEquals(null, tester.mostWantedLetter(null));
     }
 }
